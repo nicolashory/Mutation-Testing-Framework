@@ -1,13 +1,15 @@
-Description de la chaîne de build
+#Spécifications de notre projet
+
+#Description de la chaîne de build
 
 1. On génère les classes des sources de Bases ( en exécutant les tests)
 2. On génère les classes nécessaires a notre script (et on exécute les tests)
 3. Si les 2 builds suivants sont successfull, on applique nos mutations ( Choix de la mutation et du lieu d’application -> Génération des nouvelles classes -> Application du banc de test sur ces nouvelles classes (et donc génération des fichiers xml de rapport)
 4. Une fois toutes les mutations effectuées et tout les rapports récupérés, on génère le fichier html synthèse.
 
-    Artefacts manipulés
+    #Artefacts manipulés
 
-    Outils utilisés
+    #Outils utilisés
 - Pour passer des .java aux .class: javac
 - Pour tester le projet actuel: JUnit
 - Pour générer les classes mutation: Java
@@ -20,7 +22,7 @@ Pour exécuter la totalité de cette chaîne: Shell ou Plugin Maven.
 
 
 
-Mutations possibles
+#Mutations possibles
 Types de mutations:
 
 x>y, x+y … :
