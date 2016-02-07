@@ -89,6 +89,6 @@
         
     Cela permet de commencer par une mutation générale, puis de préciser le lieu d'application afin d'aller tester le code un peu plus en profondeur, afin d'avoir une idée plus claire d'où vient un problème lorsque les tests échouent.
     
-    Nous appliquerons donc nos mutations de manières incrémentales, afin de veiller à tester chacun des tests du banc de l'utilisateur, et qu'il soit testé de manière complète (en testant un grand nombre de mutants différents censés mettre en echec chaque test).
+    Nous appliquerons donc nos mutations de manière incrémentale, afin de veiller à tester chacun des tests du banc de l'utilisateur, et qu'il soit testé de manière complète (en testant un grand nombre de mutants différents censés mettre en échec chaque test).
 
-Il ne faut cependant pas appliquer un trop grand nombre de mutation au même mutant, et vérifier la compatibilité entre les différentes mutations appliquées (si on modifie la manière dont est parcourue la boucle en modifiant l'incrementeur et la condition de fin, on peut obtenir une fonction équivalente, qui va donc introduire un mutant viable, qui n'est pas dans les objectifs premiers de notre étude).
+Il ne faut cependant pas appliquer un trop grand nombre de mutations au même mutant, et vérifier la compatibilité entre les différentes mutations appliquées (si on modifie la manière dont est parcourue la boucle en modifiant l'incrémenteur et la condition de fin, on peut obtenir une fonction équivalente, qui va donc introduire un mutant viable, qui n'est pas dans les objectifs premiers de notre étude).
