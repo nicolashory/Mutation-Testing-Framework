@@ -79,7 +79,7 @@
 
 - Suppression de statements aléatoires dans le code
 
-##Où les appliquer
+##Où et Comment les appliquer
 
     En ce qui concerne les lieux d'application de nos mutations, nous avons distingué les quatre possibilités suivantes:
         - Aléatoire jusqu'à un certain seuil par classe
@@ -88,5 +88,7 @@
         - Une mutation par méthode
         
     Cela permet de commencer par une mutation générale, puis de préciser le lieu d'application afin d'aller tester le code un peu plus en profondeur, afin d'avoir une idée plus claire d'où vient un problème lorsque les tests échouent.
+    
+    Nous appliquerons donc nos mutations de manières incrémentales, afin de veiller à tester chacun des tests du banc de l'utilisateur, et qu'il soit testé de manière complète (en testant un grand nombre de mutants différents censés mettre en echec chaque test).
 
-##Comment les appliquer
+Il ne faut cependant pas appliquer un trop grand nombre de mutation au même mutant, et vérifier la compatibilité entre les différentes mutations appliquées (si on modifie la manière dont est parcourue la boucle en modifiant l'incrementeur et la condition de fin, on peut obtenir une fonction équivalente, qui va donc introduire un mutant viable, qui n'est pas dans les objectifs premiers de notre étude).
