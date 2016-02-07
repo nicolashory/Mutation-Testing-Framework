@@ -1,29 +1,39 @@
 #Spécifications de notre projet
 
-#Description de la chaîne de build
+##Description de la chaîne de build
 
-1. On génère les classes des sources de Bases ( en exécutant les tests)
-2. On génère les classes nécessaires a notre script (et on exécute les tests)
-3. Si les 2 builds suivants sont successfull, on applique nos mutations ( Choix de la mutation et du lieu d’application -> Génération des nouvelles classes -> Application du banc de test sur ces nouvelles classes (et donc génération des fichiers xml de rapport)
-4. Une fois toutes les mutations effectuées et tout les rapports récupérés, on génère le fichier html synthèse.
+    Notre chaîne de build se décompose en plusieurs étapes:
 
-    #Artefacts manipulés
+        1. Générer les classes des sources de Bases ( en exécutant les tests)
+        2. Générer les classes nécessaires à notre script (et exécuter les tests)
+        3. Si les 2 builds suivants sont successfull, appliquer nos mutations ( Choix de la mutation et du lieu                    d’application -> Génération des nouvelles classes -> Application du banc de test sur ces nouvelles classes (et donc         génération des fichiers xml de rapport)
+        4. Une fois toutes les mutations effectuées récupérer tous les rapports. 
+        5. Générer le fichier html synthèse.
 
-    #Outils utilisés
-- Pour passer des .java aux .class: javac
-- Pour tester le projet actuel: JUnit
-- Pour générer les classes mutation: Java
-- Pour appliquer les mutations: Spoon
-- Pour lancer les tests sur le code contenant les mutations: JUnit
-- Pour récupérer tous les xml: Java
-- Pour créer le rapport à partir des xml: Java
+    Afin d'automatiser les différentes étapes de notre chaîne de build, nous allons mettre en place un script Shell.
 
-Pour exécuter la totalité de cette chaîne: Shell ou Plugin Maven.
+
+    ###Artefacts manipulés
+    
+    Au cours de ce projet, les artefacts manipulés seront principalement les sources desquelles nous allons partir, ainsi que les tests s'appliquant sur ces sources. En effet, ce projet consiste à introduire des mutations au sein d'un code source fourni, afin d'observer le comportement et le résultat du banc de tests après avoir appliqué ces modifications.
+
+    ###Outils associés
+    
+    Nous allons utiliser différents outils afin de réaliser ce projet, parmi lesquels:
+        - Java: Pour passer des .java aux .class, générer les classes mutation, récupérer les fichiers xml et créer le                     rapport html.
+        - Bash: Script permettant d'automatiser toutes les étapes.
+        - JUnit: Lancer les tests sur le code initial, ainsi que le code après insertion des mutations.
+        - Spoon: Appliquer les mutations.
+        - Bootstrap: Mise en page et affichage du fichier synthèse. 
+        - HighChart: Mise en page et affichage du fichier synthèse.
+        
+     Nous allons également reprendre des étapes de build Maven afin d'aider à l'automatisation de notre chaîne de build.
 
 
 
 #Mutations possibles
-Types de mutations:
+
+##Types de mutations:
 
 x>y, x+y … :
 
@@ -72,11 +82,10 @@ Implements au lieu de extends
 
 Suppression de statements aléatoires dans le code
 
-
-    Où
+##Où les appliquer
 Aléatoire jusqu'à un certain seuil par classe
 Une mutation par classe
 Une mutation en tout
 Une mutation par méthode
 
-    Comment
+##Comment les appliquer
