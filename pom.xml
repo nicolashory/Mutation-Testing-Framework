@@ -25,7 +25,17 @@
                     <target>1.7</target>
                 </configuration>
             </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <redirectTestOutputToFile>true</redirectTestOutputToFile>
+                    <reportsDirectory>${reportDirectory}/</reportsDirectory>
+                </configuration>
+                <version>2.19.1</version>
+            </plugin>
         </plugins>
+
         <directory>${buildDirectory}</directory>
     </build>
     <properties>

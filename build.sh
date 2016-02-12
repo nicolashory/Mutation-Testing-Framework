@@ -7,7 +7,7 @@ else
     echo "Base folder already exists..."
 fi
 mvn compile -DbuildDirectory=Base
-mvn surefire-report:report -DoutputDirectory=Base/report
+mvn test -DreportDirectory=Base/reports
 #for (mutation [i]) {
 #    créer un dossier mutation[i] -> code mutant généré (.class) + xml
 #}
