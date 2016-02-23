@@ -11,4 +11,11 @@ public class MainTest {
         String testString = mainTest.helloWorld();
         assertEquals("Hello World !", testString);
     }
+
+    @Test
+    public void testHelloBla() {
+        Main main = new Main();
+        String test = main.helloWorld();
+        assertEquals("Bye", test);
+    }
 }
