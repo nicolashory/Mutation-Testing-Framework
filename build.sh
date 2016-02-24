@@ -12,4 +12,5 @@ mvn test -DreportDirectory=Base/reports
 #    créer un dossier mutation[i] -> code mutant généré (.class) + xml
 #}
 #xml généré 
-#html synthèse 
+#html synthèse
+java ReportCreater
