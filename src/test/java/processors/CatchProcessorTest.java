@@ -1,4 +1,4 @@
-package analyse;
+package processors;
 
 import org.junit.Test;
 import spoon.Launcher;

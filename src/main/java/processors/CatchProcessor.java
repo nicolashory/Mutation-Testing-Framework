@@ -1,4 +1,4 @@
-package analyse;
+package processors;
 
 import org.apache.log4j.Level;
 import spoon.processing.AbstractProcessor;
