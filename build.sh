@@ -14,6 +14,7 @@ if [ $2 ]; then
 fi
 
 #On se place dans le dossier du framework
+cp ReportCreater.class $1
 cd Framework
 
 #1: On lance le maven install
@@ -42,6 +43,8 @@ mvn compile -DbuildDirectory=FirstMutation
 mvn surefire:test -DreportDirectory=./FirstMutation/reports
 
 # 3. Generer le rapport html a partir de tous les rapports générés: java ReportCreater
+cd $1
+java ReportCreater
 
 # 4. Clean l'ensemble des dossiers créés pour la génération et utilisation des mutants
 
