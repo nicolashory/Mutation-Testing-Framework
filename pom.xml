@@ -68,7 +68,7 @@
                 </executions>
                 <configuration>
                     <processors>
-                        <processor>fr.inria.gforge.spoon.processors.CatchProcessor</processor>
+                        <processor>processors.CatchProcessor</processor>
                     </processors>
                 </configuration>
             </plugin>
