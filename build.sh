@@ -35,10 +35,14 @@ nbMutation=${#allMutation[@]}
 
 cd $1
 mkdir NoMutation
-mvn compile -DbuildDirectory NoMutation
-mvn surefire test -DreportDirectory=./NoMutation/reports
+mvn surefire:test -DreportDirectory=./NoMutation/reports
+
+mkdir FirstMutation
+mvn compile -DbuildDirectory=FirstMutation
+mvn surefire:test -DreportDirectory=./FirstMutation/reports
 
 # 3. Generer le rapport html a partir de tous les rapports générés: java ReportCreater
+
 # 4. Clean l'ensemble des dossiers créés pour la génération et utilisation des mutants
 
 # Ancienne utilisation de compile: mvn compile -DbuildDirectory=Base
