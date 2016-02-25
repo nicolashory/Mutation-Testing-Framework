@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>devops.2.3</groupId>
-    <artifactId>mutation-testing-framework</artifactId>
+    <artifactId>mutation-testing-framework-Application</artifactId>
     <version>1.0-SNAPSHOT</version>
 
     <properties>
@@ -75,6 +75,8 @@
                 <configuration>
                     <processors>
                         <processor>processors.CatchProcessor</processor>
+                        <processor>mutation.BinaryOperatorMutator</processor>
+                        <processor>CatchProcessor</processor>
                     </processors>
                 </configuration>
             </plugin>

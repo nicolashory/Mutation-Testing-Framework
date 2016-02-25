@@ -1,5 +1,6 @@
 package processors;
 
+import processors.CatchProcessor;
 import org.junit.Test;
 import spoon.Launcher;
 import spoon.processing.ProcessingManager;

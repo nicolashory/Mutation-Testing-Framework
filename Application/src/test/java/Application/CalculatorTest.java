@@ -1,8 +1,5 @@
-package program1.src.test;
+package Application;
 
-import program1.src.main.Calculator;
-
-import org.junit.Before;
 import org.junit.Test;
 
 import static org.junit.Assert.*;

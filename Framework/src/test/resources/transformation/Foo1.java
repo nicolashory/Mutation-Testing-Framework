@@ -1,4 +1,4 @@
-package fr.inria.gforge.spoon.transformation;
+package transformation;
 
 // must **not** be in src/test/java so that it is not in the class path
 public class Foo1 implements IFoo { 

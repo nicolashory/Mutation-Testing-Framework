@@ -1,8 +1,4 @@
-package program1.src.main;
-
-import program1.src.main.Calculator;
-
-import java.util.Vector;
+package Application;
 
 public class Main {
     public static void main(String[] args) {

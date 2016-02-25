@@ -1,4 +1,4 @@
-package program1.src.main;
+package Application;
 
 public class Calculator
 {
