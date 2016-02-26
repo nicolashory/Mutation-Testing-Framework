@@ -38,10 +38,23 @@ cd $1
 mkdir NoMutation
 mvn test -DreportDirectory=./NoMutation/reports
 
-mkdir FirstMutation
-sed -i -e "s/<processors>.*<\/processors>/<processors><processor>mutation.BinaryOperatorMutator<\/processor><\/processors>/g" "pom.xml"
-mvn compile -DbuildDirectory=./FirstMutation
-mvn test -DreportDirectory=./FirstMutation/reports
+#Boucle pour chacune de nos mutations avec
+# - Création d'un dossier du nom de la mutation
+# - Modification du pom.xml de l'application
+# - Mvn compile redirige vers ce dossier
+# - Mvn test redirige vers ce dossier
+for mutation in ${allMutation[@]}
+do
+    mkdir $mutation
+    sed -i -e "s/<processors>.*<\/processors>/<processors><processor>mutation.$mutation<\/processor><\/processors>/g" "pom.xml"
+    mvn compile -DbuildDirectory=./$mutation
+    mvn test -DreportDirectory=./$mutation/reports
+done
+
+#mkdir FirstMutation
+#sed -i -e "s/<processors>.*<\/processors>/<processors><processor>mutation.BinaryOperatorMutator<\/processor><\/processors>/g" "pom.xml"
+#mvn compile -DbuildDirectory=./FirstMutation
+#mvn test -DreportDirectory=./FirstMutation/reports
 
 # 3. Generer le rapport html a partir de tous les rapports générés: java ReportCreater
 cd $1
@@ -49,6 +62,5 @@ sed -i -e "s/<processors>.*<\/processors>/<processors><\/processors>/g" "pom.xml
 java ReportCreater
 
 # 4. Clean l'ensemble des dossiers créés pour la génération et utilisation des mutants
-
-# Ancienne utilisation de compile: mvn compile -DbuildDirectory=Base
-# Ancienne utilisation de test: mvn test -DreportDirectory=Base/reports
+rm ReportCreater.class
+rm -rf target
