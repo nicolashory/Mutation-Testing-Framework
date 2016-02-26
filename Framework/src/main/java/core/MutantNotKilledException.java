@@ -1,4 +1,4 @@
-package mutation;
+package core;
 
 public class MutantNotKilledException extends RuntimeException {
 

@@ -1,4 +1,4 @@
-package mutation;
+package core;
 
 
 /** tests all contracts of a class T based on a single instance */
