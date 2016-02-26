@@ -14,6 +14,7 @@ if [ $2 ]; then
 fi
 
 #On se place dans le dossier du framework
+cp ReportCreater.class $1
 cd Framework
 
 #1: On lance le maven install
@@ -32,9 +33,6 @@ allMutation=($(ls | cut -f1 -d'.'))
 # Affichage de toutes les mutations : echo "${allMutation[*]}"
 # Recuperation du nombre de mutations
 nbMutation=${#allMutation[@]}
-cd ../generator
-javac ReportCreater.java
-mv ReportCreater.class $1
 
 cd $1
 mkdir NoMutation
@@ -46,6 +44,7 @@ mvn compile -DbuildDirectory=./FirstMutation
 mvn test -DreportDirectory=./FirstMutation/reports
 
 # 3. Generer le rapport html a partir de tous les rapports générés: java ReportCreater
+cd $1
 sed -i -e "s/<processors>.*<\/processors>/<processors><\/processors>/g" "pom.xml"
 java ReportCreater
 
