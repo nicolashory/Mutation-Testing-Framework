@@ -1,4 +1,4 @@
-package mutation;
+package core;
 
 import static org.junit.Assert.assertEquals;
 
@@ -9,9 +9,9 @@ import org.junit.Test;
 
 import spoon.reflect.declaration.CtClass;
 import mutation.BinaryOperatorMutator;
-import mutation.MutantNotKilledException;
-import mutation.MutationTester;
-import mutation.TestDriver;
+import core.MutantNotKilledException;
+import core.MutationTester;
+import core.TestDriver;
 import transformation.IFoo;
 
 public class MutationTesterTest {
