@@ -51,11 +51,6 @@ do
     mvn test -DreportDirectory=./$mutation/reports
 done
 
-#mkdir FirstMutation
-#sed -i -e "s/<processors>.*<\/processors>/<processors><processor>mutation.BinaryOperatorMutator<\/processor><\/processors>/g" "pom.xml"
-#mvn compile -DbuildDirectory=./FirstMutation
-#mvn test -DreportDirectory=./FirstMutation/reports
-
 # 3. Generer le rapport html a partir de tous les rapports générés: java ReportCreater
 cd $1
 sed -i -e "s/<processors>.*<\/processors>/<processors><\/processors>/g" "pom.xml"
