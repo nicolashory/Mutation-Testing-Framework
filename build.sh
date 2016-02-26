@@ -36,14 +36,15 @@ nbMutation=${#allMutation[@]}
 
 cd $1
 mkdir NoMutation
-mvn surefire:test -DreportDirectory=./NoMutation/reports
+mvn test -DreportDirectory=./NoMutation/reports
 
 mkdir FirstMutation
-mvn compile -DbuildDirectory=FirstMutation
-mvn surefire:test -DreportDirectory=./FirstMutation/reports
+sed -i -e "s/<processors>.*<\/processors>/<processors><processor>mutation.BinaryOperatorMutator<\/processor><\/processors>/g" "pom.xml"
+mvn compile -DbuildDirectory=./FirstMutation
+mvn test -DreportDirectory=./FirstMutation/reports
 
 # 3. Generer le rapport html a partir de tous les rapports générés: java ReportCreater
-cd $1
+sed -i -e "s/<processors>.*<\/processors>/<processors><\/processors>/g" "pom.xml"
 java ReportCreater
 
 # 4. Clean l'ensemble des dossiers créés pour la génération et utilisation des mutants
