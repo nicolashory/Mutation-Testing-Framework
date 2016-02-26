@@ -1,4 +1,4 @@
-package transformation;
+package processors;
 
         import spoon.processing.AbstractProcessor;
         import spoon.reflect.code.CtCodeSnippetStatement;
