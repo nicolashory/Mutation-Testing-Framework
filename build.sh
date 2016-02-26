@@ -14,7 +14,6 @@ if [ $2 ]; then
 fi
 
 #On se place dans le dossier du framework
-cp ReportCreater.class $1
 cd Framework
 
 #1: On lance le maven install
@@ -33,6 +32,9 @@ allMutation=($(ls | cut -f1 -d'.'))
 # Affichage de toutes les mutations : echo "${allMutation[*]}"
 # Recuperation du nombre de mutations
 nbMutation=${#allMutation[@]}
+cd ../generator
+javac ReportCreater.java
+mv ReportCreater.class $1
 
 cd $1
 mkdir NoMutation
