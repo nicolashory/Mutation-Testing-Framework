@@ -59,5 +59,5 @@ cd $frameworkFolder/target/classes
 java generator.ReportCreater $1
 
 # 4. Clean l'ensemble des dossiers créés pour la génération et utilisation des mutants
-rm ReportCreater.class
-rm -rf target
+#rm ReportCreater.class
+rm -rf $1/target
