@@ -1,30 +1,33 @@
 package generator;
 
 import java.io.*;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
 
 /**
  * @author Nicolas HORY
  * @version 23/02/16.
  */
 public class ReportCreater {
+    private String filePath;
     private List<String> listRepertoriesToCheck;
 
+    public ReportCreater(String path) {
+        filePath = path;
+    }
+
     private void getRepertoriesInCurrentDir() {
-        String currentDir = System.getProperty("user.dir" );
-        File directory = new File(currentDir);
-        String [] listDirectories;
+        //String currentDir = System.getProperty("user.dir" );
+        File directory = new File(filePath);
+        //String [] listDirectories;
         this.listRepertoriesToCheck= selectWantedDirectories(Arrays.asList(directory.list()));
     }
 
-    private ArrayList<String> selectWantedDirectories(List<String> repertories) {
-        ArrayList<String> wantedReps = new ArrayList<>();
+    private List<String> selectWantedDirectories(List<String> repertories) {
+        System.out.println(repertories);
+        List<String> wantedReps = new ArrayList<>();
         for (String entry : repertories) {
                 if (!entry.contains(".")) { // Consider that it's a directory if has no extension
-                    File subFolder = new File(entry);
+                    File subFolder = new File(filePath+"/"+entry);
                     for (String sub : Arrays.asList(subFolder.list())) {
                         if (sub.equalsIgnoreCase("reports")) {
                             wantedReps.add(entry);
@@ -45,21 +48,21 @@ public class ReportCreater {
         String xmlFile="";
         Scanner scanner = null;
         try {
-            File finalReport = new File("MutationReport.html");
+            File finalReport = new File(filePath + "MutationReport.html");
             FileWriter out = null;
             out = new FileWriter(finalReport);
             out.write("<html><body><table>");
             out.write("<tr><td>Classe</td><td>Tests</td><td>Errors</td><td>Skipped</td><td>Failures</td><td>Time</td>");
 
             for (String repWithReport : listRepertoriesToCheck) {
-                List<String> filesFromRep = Arrays.asList(new File(repWithReport+"/reports").list());
+                List<String> filesFromRep = Arrays.asList(new File(filePath+"/"+repWithReport+"/reports").list());
                 for (String file : filesFromRep) {
                     if (file.endsWith("xml")) {
                         xmlFile = file;
                     }
                 }
                 System.out.println(repWithReport + "/" + xmlFile);
-                scanner = new Scanner(new File(repWithReport + "/reports/" + xmlFile)).useDelimiter("\\Z");
+                scanner = new Scanner(new File(filePath+"/"+repWithReport + "/reports/" + xmlFile)).useDelimiter("\\Z");
                 String xmlContent = scanner.next();
                 xmlContent = xmlContent.trim();
                 String subStr = xmlContent.substring(xmlContent.indexOf("name"), xmlContent.indexOf("\">"));
@@ -93,8 +96,9 @@ public class ReportCreater {
 
 
     public static void main(String[] args) throws Exception {
-        String reportXml;
-        ReportCreater creater = new ReportCreater();
+       // String reportXml;
+        System.out.println(args[0]);
+        ReportCreater creater = new ReportCreater(args[0]);
         creater.getRepertoriesInCurrentDir();
         creater.printRepertoriesToCheck();
         creater.createReportFromXmls();

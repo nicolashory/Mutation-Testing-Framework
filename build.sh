@@ -14,8 +14,9 @@ if [ $2 ]; then
 fi
 
 #On se place dans le dossier du framework
-cp ReportCreater.class $1
+#cp ReportCreater.class $1
 cd Framework
+frameworkFolder=$(pwd)
 
 #1: On lance le maven install
 echo -e "Lancement de Maven Install pour le framework"
@@ -46,7 +47,8 @@ mvn test -DreportDirectory=./FirstMutation/reports
 # 3. Generer le rapport html a partir de tous les rapports générés: java ReportCreater
 cd $1
 sed -i -e "s/<processors>.*<\/processors>/<processors><\/processors>/g" "pom.xml"
-java ReportCreater
+cd $frameworkFolder/target/classes
+java generator.ReportCreater $1
 
 # 4. Clean l'ensemble des dossiers créés pour la génération et utilisation des mutants
 
