@@ -56,7 +56,7 @@ done
 cd $1
 sed -i -e "s/<processors>.*<\/processors>/<processors><\/processors>/g" "pom.xml"
 cd $frameworkFolder/target/classes
-java generator.ReportCreater $1
+java generator.ReportCreater $1 $frameworkFolder
 
 # 4. Clean l'ensemble des dossiers créés pour la génération et utilisation des mutants
 #rm ReportCreater.class

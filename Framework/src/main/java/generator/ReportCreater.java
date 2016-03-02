@@ -49,23 +49,27 @@ public class ReportCreater {
         }
     }
 
-    private void generateBeginReport(FileWriter file) {
+    private void generateBeginReport(FileWriter file, String frameworkPath) {
         try {
             file.write("<!doctype html><html class=\"no-js\"><head><meta charset=\"utf-8\"><title></title>");
-            file.write("<meta name = \"description\" content = \"\" ><meta name = \"viewport\" content = \"width=device-width\" >");
-            file.write("<link rel = \"stylesheet\" href = \"bower_components/bootstrap/dist/css/bootstrap.css\" / ></head>");
+            file.write("<meta name = \"description\" content = \"\" ><meta name = \"viewport\" content = \"width=device-width\">");
+            file.write("<link rel = \"stylesheet\" href = \""+ frameworkPath +"/bootstrap/css/bootstrap.css\"/>");
+            file.write("<link rel = \"stylesheet\" href = \""+ frameworkPath +"/bootstrap/css/bootstrap.min.css\"/>");
+            file.write("<link rel = \"stylesheet\" href = \""+ frameworkPath +"/bootstrap/css/bootstrap-theme.css\"/>");
+            file.write("<link rel = \"stylesheet\" href = \""+ frameworkPath +"/bootstrap/css/bootstrap-theme.min.css\"/>");
+            file.write("</head>");
         } catch (Exception e) {
             // Probleme dans la generation du rapport
         }
     }
 
-    private void createReportFromXmls() {
+    private void createReportFromXmls(String frameworkPath) {
         String xmlFile="";
         Scanner scanner = null;
         try {
             File finalReport = new File(filePath + "MutationReport.html");
             FileWriter out = new FileWriter(finalReport);
-            generateBeginReport(out);
+            generateBeginReport(out,frameworkPath);
             out.write("<body><table>");
             out.write("<tr><td>Classe</td><td>Tests</td><td>Errors</td><td>Skipped</td><td>Failures</td><td>Time</td>");
 
@@ -113,6 +117,6 @@ public class ReportCreater {
         ReportCreater creater = new ReportCreater(args[0]);
         creater.getRepertoriesInCurrentDir();
         creater.printRepertoriesToCheck();
-        creater.createReportFromXmls();
+        creater.createReportFromXmls(args[1]);
     }
 }
