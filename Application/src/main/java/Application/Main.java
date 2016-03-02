@@ -5,6 +5,8 @@ public class Main {
         Calculator.addition(1,2);
         Calculator.multiplication(2,2);
         Calculator.soustraction(2,1);
+        Calculator.for10();
     }
+
 
 }

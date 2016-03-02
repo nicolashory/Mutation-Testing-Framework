@@ -23,4 +23,10 @@ public class CalculatorTest
     {
         assertEquals(Calculator.soustraction(2,1),1);
     }
+
+    @Test(timeout=1000)
+    public void testFor10()
+    {
+        assertEquals(Calculator.for10(), 10);
+    }
 }

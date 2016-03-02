@@ -14,4 +14,14 @@ public class Calculator
     {
         return a-b;
     }
+    public static int for10()
+    {
+        int a = 0;
+        for (int i =0; i < 10; i++)
+        {
+            a++;
+        }
+
+        return a;
+    }
 }
