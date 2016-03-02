@@ -2,6 +2,13 @@ package generator;
 
 import java.io.*;
 import java.util.*;
+import java.io.File;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.DocumentBuilder;
+import org.w3c.dom.Document;
+import org.w3c.dom.NodeList;
+import org.w3c.dom.Node;
+import org.w3c.dom.Element;
 
 /**
  * @author Nicolas HORY
@@ -62,30 +69,27 @@ public class ReportCreater {
                     }
                 }
                 System.out.println(repWithReport + "/" + xmlFile);
-                scanner = new Scanner(new File(filePath+"/"+repWithReport + "/reports/" + xmlFile)).useDelimiter("\\Z");
-                String xmlContent = scanner.next();
-                xmlContent = xmlContent.trim();
-                String subStr = xmlContent.substring(xmlContent.indexOf("name"), xmlContent.indexOf("\">"));
-                System.out.println(subStr);
-                String attributes[] = subStr.split(" ");
-                ArrayList<String> finalValues = new ArrayList<>();
-                for (String att : attributes) {
-                    if (att.charAt(att.length()-1) == '\"') {
-                        att = att.substring(0, att.length()-1);
-                        finalValues.add(att.substring(att.indexOf("\"")+1));
-                    } else {
-                        finalValues.add(att.substring(att.indexOf("\"")+1));
-                    }
-                }
-                String classe = finalValues.get(0);
-                String time = finalValues.get(1);
-                String tests = finalValues.get(2);
-                String errors = finalValues.get(3);
-                String skipped = finalValues.get(4);
-                String failure = finalValues.get(5);
+                DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+                try {
+                    DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+                    Document doc = dBuilder.parse(filePath + "/" + repWithReport + "/reports/" + xmlFile);
+                    doc.getDocumentElement().normalize();
 
-                out.write("<tr><td>" + classe + "</td><td>"+ tests + "</td><td>" + errors + "</td><td>" + skipped + "</td><td>" + failure + "</td><td>" + time + "</td></tr>" );
-                scanner.close();
+                    Element root = doc.getDocumentElement();
+                    System.out.println("Root element :" + root.getNodeName());
+
+                    String classe = root.getAttribute("name");
+                    String time = root.getAttribute("time");
+                    String tests = root.getAttribute("tests");
+                    String errors = root.getAttribute("errors");
+                    String skipped = root.getAttribute("skipped");
+                    String failure = root.getAttribute("failures");
+
+                    out.write("<tr><td>" + classe + "</td><td>"+ tests + "</td><td>" + errors + "</td><td>" + skipped + "</td><td>" + failure + "</td><td>" + time + "</td></tr>" );
+
+                } catch (Exception e) {
+                    //Problème lors de l'ouverture du xml
+                }
             }
             out.write("</table></body></html>");
             out.close();
