@@ -51,59 +51,94 @@ public class ReportCreater {
 
     private void generateBeginReport(FileWriter file, String frameworkPath) {
         try {
-            file.write("<!doctype html><html class=\"no-js\"><head><meta charset=\"utf-8\"><title></title>");
+            file.write("<!doctype html><html><head><meta charset=\"utf-8\"><title></title>");
             file.write("<meta name = \"description\" content = \"\" ><meta name = \"viewport\" content = \"width=device-width\">");
-            file.write("<link rel = \"stylesheet\" href = \""+ frameworkPath +"/bootstrap/css/bootstrap.css\"/>");
-            file.write("<link rel = \"stylesheet\" href = \""+ frameworkPath +"/bootstrap/css/bootstrap.min.css\"/>");
-            file.write("<link rel = \"stylesheet\" href = \""+ frameworkPath +"/bootstrap/css/bootstrap-theme.css\"/>");
-            file.write("<link rel = \"stylesheet\" href = \""+ frameworkPath +"/bootstrap/css/bootstrap-theme.min.css\"/>");
-            file.write("</head>");
+            file.write("<link rel = \"stylesheet\" href = \"bootstrap/css/bootstrap.css\"/>");
+            file.write("<link rel = \"stylesheet\" href = \"bootstrap/css/bootstrap.min.css\"/>");
+            file.write("<link rel = \"stylesheet\" href = \"bootstrap/css/bootstrap-theme.css\"/>");
+            file.write("<link rel = \"stylesheet\" href = \"bootstrap/css/bootstrap-theme.min.css\"/>");
+            file.write("<style>table {border-collapse: collapse;}" +
+                    "table, tr, td {border: 1px solid black;border-spacing:20px;}\n" +
+                    "        td {padding: 7px;}" +
+                    "    </style>");
+            file.write("</head><body>");
+            file.write("<table style=\"border-collapse : collapse; border-spacing : 2px;\">");
         } catch (Exception e) {
             // Probleme dans la generation du rapport
         }
     }
 
+    private void generateEndReport(FileWriter file, String frameworkPath) {
+        try {
+            file.write("</table>");
+            file.write("<script src=\"bootstrap/js/bootstrap.js\"></script>");
+            file.write("<script src=\"bootstrap/js/bootstrap.min.js\"></script>");
+            file.write("</table>");
+            file.write("</body ></html >");
+        } catch (Exception e) {
+            // Probleme d'écriture dans le fichier
+        }
+    }
+
+    private void generateFirstLineTable(FileWriter file) throws IOException {
+            List<String> filesFromRep = Arrays.asList(new File(filePath+"/"+listRepertoriesToCheck.get(0)+"/reports").list());
+            file.write("<tr><td></td>");
+            for (String repFile : filesFromRep) {
+                if (repFile.endsWith("xml")) {
+                    DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+                    try {
+                        DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+                        Document doc = dBuilder.parse(filePath + "/" + listRepertoriesToCheck.get(0) + "/reports/" + repFile);
+                        doc.getDocumentElement().normalize();
+                        Element root = doc.getDocumentElement();
+                        String classe = root.getAttribute("name");
+                        file.write("<td>" + classe + "</td>");
+
+                    } catch (Exception e) {
+                        //Problème lors de l'ouverture du xml
+                    }
+                }
+            }
+            file.write("</tr>");
+    }
     private void createReportFromXmls(String frameworkPath) {
         String xmlFile="";
-        Scanner scanner = null;
         try {
             File finalReport = new File(filePath + "MutationReport.html");
             FileWriter out = new FileWriter(finalReport);
             generateBeginReport(out,frameworkPath);
-            out.write("<body><table>");
-            out.write("<tr><td>Classe</td><td>Tests</td><td>Errors</td><td>Skipped</td><td>Failures</td><td>Time</td>");
-
+            generateFirstLineTable(out);
             for (String repWithReport : listRepertoriesToCheck) {
                 List<String> filesFromRep = Arrays.asList(new File(filePath+"/"+repWithReport+"/reports").list());
+                out.write("<tr><td>" + repWithReport + "</td>");
                 for (String file : filesFromRep) {
                     if (file.endsWith("xml")) {
                         xmlFile = file;
+                        DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+                        try {
+                            DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+                            Document doc = dBuilder.parse(filePath + "/" + repWithReport + "/reports/" + xmlFile);
+                            doc.getDocumentElement().normalize();
+
+                            Element root = doc.getDocumentElement();
+
+                            String classe = root.getAttribute("name");
+                            String time = root.getAttribute("time");
+                            String tests = root.getAttribute("tests");
+                            String errors = root.getAttribute("errors");
+                            String skipped = root.getAttribute("skipped");
+                            String failure = root.getAttribute("failures");
+                            //TODO introduire les couleurs ici
+                            out.write("<td></td>");
+
+                        } catch (Exception e) {
+                            //Problème lors de l'ouverture du xml
+                        }
                     }
                 }
-                System.out.println(repWithReport + "/" + xmlFile);
-                DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
-                try {
-                    DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
-                    Document doc = dBuilder.parse(filePath + "/" + repWithReport + "/reports/" + xmlFile);
-                    doc.getDocumentElement().normalize();
-
-                    Element root = doc.getDocumentElement();
-                    System.out.println("Root element :" + root.getNodeName());
-
-                    String classe = root.getAttribute("name");
-                    String time = root.getAttribute("time");
-                    String tests = root.getAttribute("tests");
-                    String errors = root.getAttribute("errors");
-                    String skipped = root.getAttribute("skipped");
-                    String failure = root.getAttribute("failures");
-
-                    out.write("<tr><td>" + classe + "</td><td>"+ tests + "</td><td>" + errors + "</td><td>" + skipped + "</td><td>" + failure + "</td><td>" + time + "</td></tr>" );
-
-                } catch (Exception e) {
-                    //Problème lors de l'ouverture du xml
-                }
+                out.write("</tr>");
             }
-            out.write("</table></body></html>");
+            generateEndReport(out, frameworkPath);
             out.close();
         } catch (IOException e) {
             e.printStackTrace();
