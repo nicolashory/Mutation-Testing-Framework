@@ -23,9 +23,7 @@ public class ReportCreater {
     }
 
     private void getRepertoriesInCurrentDir() {
-        //String currentDir = System.getProperty("user.dir" );
         File directory = new File(filePath);
-        //String [] listDirectories;
         this.listRepertoriesToCheck= selectWantedDirectories(Arrays.asList(directory.list()));
     }
 
@@ -51,14 +49,24 @@ public class ReportCreater {
         }
     }
 
+    private void generateBeginReport(FileWriter file) {
+        try {
+            file.write("<!doctype html><html class=\"no-js\"><head><meta charset=\"utf-8\"><title></title>");
+            file.write("<meta name = \"description\" content = \"\" ><meta name = \"viewport\" content = \"width=device-width\" >");
+            file.write("<link rel = \"stylesheet\" href = \"bower_components/bootstrap/dist/css/bootstrap.css\" / ></head>");
+        } catch (Exception e) {
+            // Probleme dans la generation du rapport
+        }
+    }
+
     private void createReportFromXmls() {
         String xmlFile="";
         Scanner scanner = null;
         try {
             File finalReport = new File(filePath + "MutationReport.html");
-            FileWriter out = null;
-            out = new FileWriter(finalReport);
-            out.write("<html><body><table>");
+            FileWriter out = new FileWriter(finalReport);
+            generateBeginReport(out);
+            out.write("<body><table>");
             out.write("<tr><td>Classe</td><td>Tests</td><td>Errors</td><td>Skipped</td><td>Failures</td><td>Time</td>");
 
             for (String repWithReport : listRepertoriesToCheck) {
