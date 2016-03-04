@@ -66,14 +66,15 @@ public class ReportCreater {
                     "    function drawChart() {\n" +
                     "\n" +
                     "        var data = google.visualization.arrayToDataTable([\n" +
-                    "            ['Tests par mutations', 'Mutants tués / vivants'],\n" +
+                    "            ['Tests par mutations', 'Résultats'],\n" +
                     "            ['Mutants vivants'," + (nbSuccess - 2) + "],\n" +
                     "            ['Mutants tués'," + nbFails + "],\n" +
                     "            ['Mutants morts-nés'," + nbCompileFail +"],\n" +
                     "        ]);\n" +
                     "\n" +
                     "        var options = {\n" +
-                    "            title: 'Diagramme des résultats'\n" +
+                    "            title: 'Diagramme des résultats:',\n" +
+                    "            colors: ['#008000', '#FF0000', '#8A4B08']\n" +
                     "        };\n" +
                     "\n" +
                     "        var chart = new google.visualization.PieChart(document.getElementById('piechart'));\n" +
@@ -171,7 +172,7 @@ public class ReportCreater {
                     out.write("<tr><td>" + repWithReport + "</td>");
                     for (int i = 0; i < nbTest; i++) {
                         nbCompileFail++;
-                        out.write("<td style=\"background:red;text-align:center;\"><b>COMPILATION FAILURE</b></td>");
+                        out.write("<td style=\"background:#8A4B08;text-align:center;color:white;\"><b>COMPILATION FAILURE</b></td>");
                     }
                 }
             }
