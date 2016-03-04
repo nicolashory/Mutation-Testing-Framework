@@ -13,9 +13,7 @@ if [ $2 ]; then
     exit 1
 fi
 
-#On se place dans le dossier du framework
-#cp ReportCreater.class $1
-cd Framework
+#On conserve le path du framework
 frameworkFolder=$(pwd)
 
 #1: On lance le maven install
@@ -35,9 +33,14 @@ allMutation=($(ls | cut -f1 -d'.'))
 # Recuperation du nombre de mutations
 nbMutation=${#allMutation[@]}
 
+# On se place dans l'application où on doit appliquer les mutations
 cd $1
-mkdir NoMutation
-mvn test -DreportDirectory=./NoMutation/reports
+# Creation du dossier résultat dans lequel on placera tous les dossiers générés pour les mutations
+#   et le rapport
+mkdir Result
+
+mkdir Result/NoMutation
+mvn test -DreportDirectory=./Result/NoMutation/reports
 
 #Boucle pour chacune de nos mutations avec
 # - Création d'un dossier du nom de la mutation
@@ -46,18 +49,21 @@ mvn test -DreportDirectory=./NoMutation/reports
 # - Mvn test redirige vers ce dossier
 for mutation in ${allMutation[@]}
 do
-    mkdir $mutation
-    sed -i -e "s/<processors>.*<\/processors>/<processors><processor>mutation.$mutation<\/processor><\/processors>/g" "pom.xml"
-    mvn compile -DbuildDirectory=./$mutation
-    mvn test -DreportDirectory=./$mutation/reports
+    mkdir Result/$mutation
+    sed -i -e "s/<processors>.*<\/processors>/<processors><processor>mutation.$mutation<\/processor><\/processors>/g" pom.xml
+    mvn compile -DbuildDirectory=./Result/$mutation
+    mvn test -DreportDirectory=./Result/$mutation/reports
+    rm -rf Result/$mutation/classes Result/$mutation/maven-status Result/$mutation/spoon-maven-plugin
 done
 
 # 3. Generer le rapport html a partir de tous les rapports générés: java ReportCreater
 cd $1
-sed -i -e "s/<processors>.*<\/processors>/<processors><\/processors>/g" "pom.xml"
+sed -i -e "s/<processors>.*<\/processors>/<processors><\/processors>/g" pom.xml
 cd $frameworkFolder/target/classes
-java generator.ReportCreater $1 $frameworkFolder
+java generator.ReportCreater $1/Result/ $frameworkFolder
+
+cp  -r $frameworkFolder/bootstrap $1/Result/
 
 # 4. Clean l'ensemble des dossiers créés pour la génération et utilisation des mutants
 #rm ReportCreater.class
-rm -rf $1/target
+rm -rf $1/target $frameworkFolder/target
