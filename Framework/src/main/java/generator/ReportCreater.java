@@ -32,7 +32,7 @@ public class ReportCreater {
 
     private void generateBeginReport(FileWriter file, String frameworkPath) {
         try {
-            file.write("<!doctype html><html><head><meta charset=\"utf-8\"><title></title>");
+            file.write("<!doctype html><html><head><meta charset=\"utf-8\"><title>Rapport sur les mutations</title>");
             file.write("<meta name = \"description\" content = \"\" ><meta name = \"viewport\" content = \"width=device-width\">");
             file.write("<script type=\"text/javascript\" src=\"https://www.gstatic.com/charts/loader.js\"></script>\n");
             file.write("<link rel = \"stylesheet\" href = \"bootstrap/css/bootstrap.css\"/>");
@@ -73,7 +73,7 @@ public class ReportCreater {
                     "        ]);\n" +
                     "\n" +
                     "        var options = {\n" +
-                    "            title: 'Résultat des tests par mutations'\n" +
+                    "            title: 'Diagramme des résultats'\n" +
                     "        };\n" +
                     "\n" +
                     "        var chart = new google.visualization.PieChart(document.getElementById('piechart'));\n" +
