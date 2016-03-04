@@ -14,21 +14,17 @@ import org.w3c.dom.Element;
  */
 public class ReportCreater {
     private String filePath;
+    private int nbTest;
     private List<String> listRepertoriesToCheck;
 
     public ReportCreater(String path) {
         filePath = path;
+        nbTest = 0;
     }
 
     private void getRepertoriesInCurrentDir() {
         File directory = new File(filePath);
         this.listRepertoriesToCheck= Arrays.asList(directory.list());
-    }
-
-    private void printRepertoriesToCheck() {
-        for(String rep : listRepertoriesToCheck){
-            System.out.println(rep);
-        }
     }
 
     private void generateBeginReport(FileWriter file, String frameworkPath) {
@@ -75,6 +71,7 @@ public class ReportCreater {
                         Element root = doc.getDocumentElement();
                         String classe = root.getAttribute("name");
                         file.write("<td>" + classe + "</td>");
+                        nbTest++;
 
                     } catch (Exception e) {
                         //Problème lors de l'ouverture du xml
@@ -92,7 +89,7 @@ public class ReportCreater {
             generateFirstLineTable(out);
             for (String repWithReport : listRepertoriesToCheck) {
                 boolean hasReports = false;
-                File repertory = new File(repWithReport);
+                File repertory = new File(filePath + repWithReport);
                 for (String subRep: Arrays.asList(repertory.list())) {
                     if (subRep.equalsIgnoreCase("reports")) {
                         hasReports = true;
@@ -127,7 +124,9 @@ public class ReportCreater {
                     out.write("</tr>");
                 } else {
                     out.write("<tr><td>" + repWithReport + "</td>");
-                    out.write("<td>caca</td>");
+                    for (int i = 0; i < nbTest; i++) {
+                        out.write("<td style=\"background:red; text-align:center;\">Compilation Failure</td>");
+                    }
                 }
             }
             generateEndReport(out, frameworkPath);
@@ -139,11 +138,9 @@ public class ReportCreater {
 
 
     public static void main(String[] args) throws Exception {
-       // String reportXml;
         System.out.println(args[0]);
         ReportCreater creater = new ReportCreater(args[0]);
         creater.getRepertoriesInCurrentDir();
-        creater.printRepertoriesToCheck();
         creater.createReportFromXmls(args[1]);
     }
 }
