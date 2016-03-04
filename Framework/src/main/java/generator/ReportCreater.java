@@ -6,8 +6,6 @@ import java.io.File;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.DocumentBuilder;
 import org.w3c.dom.Document;
-import org.w3c.dom.NodeList;
-import org.w3c.dom.Node;
 import org.w3c.dom.Element;
 
 /**
@@ -24,23 +22,7 @@ public class ReportCreater {
 
     private void getRepertoriesInCurrentDir() {
         File directory = new File(filePath);
-        this.listRepertoriesToCheck= selectWantedDirectories(Arrays.asList(directory.list()));
-    }
-
-    private List<String> selectWantedDirectories(List<String> repertories) {
-        System.out.println(repertories);
-        List<String> wantedReps = new ArrayList<>();
-        for (String entry : repertories) {
-                if (!entry.contains(".")) { // Consider that it's a directory if has no extension
-                    File subFolder = new File(filePath+"/"+entry);
-                    for (String sub : Arrays.asList(subFolder.list())) {
-                        if (sub.equalsIgnoreCase("reports")) {
-                            wantedReps.add(entry);
-                        }
-                    }
-                }
-            }
-        return wantedReps;
+        this.listRepertoriesToCheck= Arrays.asList(directory.list());
     }
 
     private void printRepertoriesToCheck() {
@@ -81,7 +63,7 @@ public class ReportCreater {
     }
 
     private void generateFirstLineTable(FileWriter file) throws IOException {
-            List<String> filesFromRep = Arrays.asList(new File(filePath+"/"+listRepertoriesToCheck.get(0)+"/reports").list());
+            List<String> filesFromRep = Arrays.asList(new File(filePath+"/NoMutation/reports").list());
             file.write("<tr><td></td>");
             for (String repFile : filesFromRep) {
                 if (repFile.endsWith("xml")) {
@@ -109,32 +91,44 @@ public class ReportCreater {
             generateBeginReport(out,frameworkPath);
             generateFirstLineTable(out);
             for (String repWithReport : listRepertoriesToCheck) {
-                List<String> filesFromRep = Arrays.asList(new File(filePath+"/"+repWithReport+"/reports").list());
-                out.write("<tr><td>" + repWithReport + "</td>");
-                for (String file : filesFromRep) {
-                    if (file.endsWith("xml")) {
-                        xmlFile = file;
-                        DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
-                        try {
-                            DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
-                            Document doc = dBuilder.parse(filePath + "/" + repWithReport + "/reports/" + xmlFile);
-                            doc.getDocumentElement().normalize();
-
-                            Element root = doc.getDocumentElement();
-
-                            String failure = root.getAttribute("failures");
-                            if (Integer.parseInt(failure) == 0) { // Aucun fail: case verte
-                                out.write("<td style=\"background:green\"></td>");
-                            } else {
-                                out.write("<td style=\"background:red\"></td>");
-                            }
-
-                        } catch (Exception e) {
-                            //Problème lors de l'ouverture du xml
-                        }
+                boolean hasReports = false;
+                File repertory = new File(repWithReport);
+                for (String subRep: Arrays.asList(repertory.list())) {
+                    if (subRep.equalsIgnoreCase("reports")) {
+                        hasReports = true;
                     }
                 }
-                out.write("</tr>");
+                if (hasReports) {
+                    List<String> filesFromRep = Arrays.asList(new File(filePath + "/" + repWithReport + "/reports").list());
+                    out.write("<tr><td>" + repWithReport + "</td>");
+                    for (String file : filesFromRep) {
+                        if (file.endsWith("xml")) {
+                            xmlFile = file;
+                            DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+                            try {
+                                DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+                                Document doc = dBuilder.parse(filePath + "/" + repWithReport + "/reports/" + xmlFile);
+                                doc.getDocumentElement().normalize();
+
+                                Element root = doc.getDocumentElement();
+
+                                String failure = root.getAttribute("failures");
+                                if (Integer.parseInt(failure) == 0) { // Aucun fail: case verte
+                                    out.write("<td style=\"background:green\"></td>");
+                                } else {
+                                    out.write("<td style=\"background:red\"></td>");
+                                }
+
+                            } catch (Exception e) {
+                                //Problème lors de l'ouverture du xml
+                            }
+                        }
+                    }
+                    out.write("</tr>");
+                } else {
+                    out.write("<tr><td>" + repWithReport + "</td>");
+                    out.write("<td>caca</td>");
+                }
             }
             generateEndReport(out, frameworkPath);
             out.close();
