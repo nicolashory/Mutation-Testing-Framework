@@ -122,14 +122,12 @@ public class ReportCreater {
 
                             Element root = doc.getDocumentElement();
 
-                            String classe = root.getAttribute("name");
-                            String time = root.getAttribute("time");
-                            String tests = root.getAttribute("tests");
-                            String errors = root.getAttribute("errors");
-                            String skipped = root.getAttribute("skipped");
                             String failure = root.getAttribute("failures");
-                            //TODO introduire les couleurs ici
-                            out.write("<td></td>");
+                            if (Integer.parseInt(failure) == 0) { // Aucun fail: case verte
+                                out.write("<td style=\"background:green\"></td>");
+                            } else {
+                                out.write("<td style=\"background:red\"></td>");
+                            }
 
                         } catch (Exception e) {
                             //Problème lors de l'ouverture du xml
