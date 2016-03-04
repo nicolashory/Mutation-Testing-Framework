@@ -15,6 +15,9 @@ import org.w3c.dom.Element;
 public class ReportCreater {
     private String filePath;
     private int nbTest;
+    private int nbFails;
+    private int nbSuccess;
+    private int nbCompileFail;
     private List<String> listRepertoriesToCheck;
 
     public ReportCreater(String path) {
@@ -31,6 +34,7 @@ public class ReportCreater {
         try {
             file.write("<!doctype html><html><head><meta charset=\"utf-8\"><title></title>");
             file.write("<meta name = \"description\" content = \"\" ><meta name = \"viewport\" content = \"width=device-width\">");
+            file.write("<script type=\"text/javascript\" src=\"https://www.gstatic.com/charts/loader.js\"></script>\n");
             file.write("<link rel = \"stylesheet\" href = \"bootstrap/css/bootstrap.css\"/>");
             file.write("<link rel = \"stylesheet\" href = \"bootstrap/css/bootstrap.min.css\"/>");
             file.write("<link rel = \"stylesheet\" href = \"bootstrap/css/bootstrap-theme.css\"/>");
@@ -46,10 +50,39 @@ public class ReportCreater {
                     "  <div class=\"page-header\">\n" +
                     "    <h1>Rapport sur les mutations</h1>      \n" +
                     "  </div>\n" +
-                    " <div>");
+                    " <div id=\"tableResults\">");
             file.write("<table style=\"border-collapse : collapse; border-spacing : 2px;\">");
         } catch (Exception e) {
             // Probleme dans la generation du rapport
+        }
+    }
+
+    private void generatePiechart(FileWriter file) {
+        try {
+            file.write("<script type=\"text/javascript\" src=\"https://www.gstatic.com/charts/loader.js\"></script>\n" +
+                    "<script type=\"text/javascript\">\n" +
+                    "    google.charts.load('current', {'packages':['corechart']});\n" +
+                    "    google.charts.setOnLoadCallback(drawChart);\n" +
+                    "    function drawChart() {\n" +
+                    "\n" +
+                    "        var data = google.visualization.arrayToDataTable([\n" +
+                    "            ['Tests par mutations', 'Mutants tués / vivants'],\n" +
+                    "            ['Mutants vivants'," + (nbSuccess - 2) + "],\n" +
+                    "            ['Mutants tués'," + nbFails + "],\n" +
+                    "            ['Mutants morts-nés'," + nbCompileFail +"],\n" +
+                    "        ]);\n" +
+                    "\n" +
+                    "        var options = {\n" +
+                    "            title: 'Résultat des tests par mutations'\n" +
+                    "        };\n" +
+                    "\n" +
+                    "        var chart = new google.visualization.PieChart(document.getElementById('piechart'));\n" +
+                    "\n" +
+                    "        chart.draw(data, options);\n" +
+                    "    }\n" +
+                    "</script>");
+        } catch(Exception e) {
+            // Probleme generation piechart
         }
     }
 
@@ -57,10 +90,12 @@ public class ReportCreater {
         try {
             file.write("</table>");
             file.write("</div>");
+            file.write("<div id=\"piechart\" style=\"width: 900px; height: 500px;\"></div>");
+            file.write("</div");
+            generatePiechart(file);
             file.write("<script src=\"bootstrap/js/bootstrap.js\"></script>");
             file.write("<script src=\"bootstrap/js/bootstrap.min.js\"></script>");
-            file.write("</table>");
-            file.write("</body ></html >");
+            file.write("</body></html >");
         } catch (Exception e) {
             // Probleme d'écriture dans le fichier
         }
@@ -120,8 +155,10 @@ public class ReportCreater {
                                 String failure = root.getAttribute("failures");
                                 if (Integer.parseInt(failure) == 0) { // Aucun fail: case verte
                                     out.write("<td style=\"background:green\"></td>");
+                                    nbSuccess++;
                                 } else {
                                     out.write("<td style=\"background:red\"></td>");
+                                    nbFails++;
                                 }
 
                             } catch (Exception e) {
@@ -133,6 +170,7 @@ public class ReportCreater {
                 } else {
                     out.write("<tr><td>" + repWithReport + "</td>");
                     for (int i = 0; i < nbTest; i++) {
+                        nbCompileFail++;
                         out.write("<td style=\"background:red;text-align:center;\"><b>COMPILATION FAILURE</b></td>");
                     }
                 }
