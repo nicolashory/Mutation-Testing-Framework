@@ -6,8 +6,6 @@ import java.io.File;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.DocumentBuilder;
 import org.w3c.dom.Document;
-import org.w3c.dom.NodeList;
-import org.w3c.dom.Node;
 import org.w3c.dom.Element;
 
 /**
@@ -16,37 +14,17 @@ import org.w3c.dom.Element;
  */
 public class ReportCreater {
     private String filePath;
+    private int nbTest;
     private List<String> listRepertoriesToCheck;
 
     public ReportCreater(String path) {
         filePath = path;
+        nbTest = 0;
     }
 
     private void getRepertoriesInCurrentDir() {
         File directory = new File(filePath);
-        this.listRepertoriesToCheck= selectWantedDirectories(Arrays.asList(directory.list()));
-    }
-
-    private List<String> selectWantedDirectories(List<String> repertories) {
-        System.out.println(repertories);
-        List<String> wantedReps = new ArrayList<>();
-        for (String entry : repertories) {
-                if (!entry.contains(".")) { // Consider that it's a directory if has no extension
-                    File subFolder = new File(filePath+"/"+entry);
-                    for (String sub : Arrays.asList(subFolder.list())) {
-                        if (sub.equalsIgnoreCase("reports")) {
-                            wantedReps.add(entry);
-                        }
-                    }
-                }
-            }
-        return wantedReps;
-    }
-
-    private void printRepertoriesToCheck() {
-        for(String rep : listRepertoriesToCheck){
-            System.out.println(rep);
-        }
+        this.listRepertoriesToCheck= Arrays.asList(directory.list());
     }
 
     private void generateBeginReport(FileWriter file, String frameworkPath) {
@@ -60,8 +38,15 @@ public class ReportCreater {
             file.write("<style>table {border-collapse: collapse;}" +
                     "table, tr, td {border: 1px solid black;border-spacing:20px;}\n" +
                     "        td {padding: 7px;}" +
+                    "        div, h1, table{margin:auto;}" +
+                    "        .page-header{text-align: center;}" +
                     "    </style>");
             file.write("</head><body>");
+            file.write("<div class=\"container\">\n" +
+                    "  <div class=\"page-header\">\n" +
+                    "    <h1>Rapport sur les mutations</h1>      \n" +
+                    "  </div>\n" +
+                    " <div>");
             file.write("<table style=\"border-collapse : collapse; border-spacing : 2px;\">");
         } catch (Exception e) {
             // Probleme dans la generation du rapport
@@ -71,6 +56,7 @@ public class ReportCreater {
     private void generateEndReport(FileWriter file, String frameworkPath) {
         try {
             file.write("</table>");
+            file.write("</div>");
             file.write("<script src=\"bootstrap/js/bootstrap.js\"></script>");
             file.write("<script src=\"bootstrap/js/bootstrap.min.js\"></script>");
             file.write("</table>");
@@ -81,7 +67,7 @@ public class ReportCreater {
     }
 
     private void generateFirstLineTable(FileWriter file) throws IOException {
-            List<String> filesFromRep = Arrays.asList(new File(filePath+"/"+listRepertoriesToCheck.get(0)+"/reports").list());
+            List<String> filesFromRep = Arrays.asList(new File(filePath+"/NoMutation/reports").list());
             file.write("<tr><td></td>");
             for (String repFile : filesFromRep) {
                 if (repFile.endsWith("xml")) {
@@ -93,6 +79,7 @@ public class ReportCreater {
                         Element root = doc.getDocumentElement();
                         String classe = root.getAttribute("name");
                         file.write("<td>" + classe + "</td>");
+                        nbTest++;
 
                     } catch (Exception e) {
                         //Problème lors de l'ouverture du xml
@@ -109,34 +96,46 @@ public class ReportCreater {
             generateBeginReport(out,frameworkPath);
             generateFirstLineTable(out);
             for (String repWithReport : listRepertoriesToCheck) {
-                List<String> filesFromRep = Arrays.asList(new File(filePath+"/"+repWithReport+"/reports").list());
-                out.write("<tr><td>" + repWithReport + "</td>");
-                for (String file : filesFromRep) {
-                    if (file.endsWith("xml")) {
-                        xmlFile = file;
-                        DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
-                        try {
-                            DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
-                            Document doc = dBuilder.parse(filePath + "/" + repWithReport + "/reports/" + xmlFile);
-                            doc.getDocumentElement().normalize();
-
-                            Element root = doc.getDocumentElement();
-
-                            String classe = root.getAttribute("name");
-                            String time = root.getAttribute("time");
-                            String tests = root.getAttribute("tests");
-                            String errors = root.getAttribute("errors");
-                            String skipped = root.getAttribute("skipped");
-                            String failure = root.getAttribute("failures");
-                            //TODO introduire les couleurs ici
-                            out.write("<td></td>");
-
-                        } catch (Exception e) {
-                            //Problème lors de l'ouverture du xml
-                        }
+                boolean hasReports = false;
+                File repertory = new File(filePath + repWithReport);
+                for (String subRep: Arrays.asList(repertory.list())) {
+                    if (subRep.equalsIgnoreCase("reports")) {
+                        hasReports = true;
                     }
                 }
-                out.write("</tr>");
+                if (hasReports) {
+                    List<String> filesFromRep = Arrays.asList(new File(filePath + "/" + repWithReport + "/reports").list());
+                    out.write("<tr><td>" + repWithReport + "</td>");
+                    for (String file : filesFromRep) {
+                        if (file.endsWith("xml")) {
+                            xmlFile = file;
+                            DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+                            try {
+                                DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+                                Document doc = dBuilder.parse(filePath + "/" + repWithReport + "/reports/" + xmlFile);
+                                doc.getDocumentElement().normalize();
+
+                                Element root = doc.getDocumentElement();
+
+                                String failure = root.getAttribute("failures");
+                                if (Integer.parseInt(failure) == 0) { // Aucun fail: case verte
+                                    out.write("<td style=\"background:green\"></td>");
+                                } else {
+                                    out.write("<td style=\"background:red\"></td>");
+                                }
+
+                            } catch (Exception e) {
+                                //Problème lors de l'ouverture du xml
+                            }
+                        }
+                    }
+                    out.write("</tr>");
+                } else {
+                    out.write("<tr><td>" + repWithReport + "</td>");
+                    for (int i = 0; i < nbTest; i++) {
+                        out.write("<td style=\"background:red;text-align:center;\"><b>COMPILATION FAILURE</b></td>");
+                    }
+                }
             }
             generateEndReport(out, frameworkPath);
             out.close();
@@ -147,11 +146,8 @@ public class ReportCreater {
 
 
     public static void main(String[] args) throws Exception {
-       // String reportXml;
-        System.out.println(args[0]);
         ReportCreater creater = new ReportCreater(args[0]);
         creater.getRepertoriesInCurrentDir();
-        creater.printRepertoriesToCheck();
         creater.createReportFromXmls(args[1]);
     }
 }
