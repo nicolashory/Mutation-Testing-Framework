@@ -38,8 +38,15 @@ public class ReportCreater {
             file.write("<style>table {border-collapse: collapse;}" +
                     "table, tr, td {border: 1px solid black;border-spacing:20px;}\n" +
                     "        td {padding: 7px;}" +
+                    "        div, h1, table{margin:auto;}" +
+                    "        .page-header{text-align: center;}" +
                     "    </style>");
             file.write("</head><body>");
+            file.write("<div class=\"container\">\n" +
+                    "  <div class=\"page-header\">\n" +
+                    "    <h1>Rapport sur les mutations</h1>      \n" +
+                    "  </div>\n" +
+                    " <div>");
             file.write("<table style=\"border-collapse : collapse; border-spacing : 2px;\">");
         } catch (Exception e) {
             // Probleme dans la generation du rapport
@@ -49,6 +56,7 @@ public class ReportCreater {
     private void generateEndReport(FileWriter file, String frameworkPath) {
         try {
             file.write("</table>");
+            file.write("</div>");
             file.write("<script src=\"bootstrap/js/bootstrap.js\"></script>");
             file.write("<script src=\"bootstrap/js/bootstrap.min.js\"></script>");
             file.write("</table>");
@@ -125,7 +133,7 @@ public class ReportCreater {
                 } else {
                     out.write("<tr><td>" + repWithReport + "</td>");
                     for (int i = 0; i < nbTest; i++) {
-                        out.write("<td style=\"background:red; text-align:center;\">Compilation Failure</td>");
+                        out.write("<td style=\"background:red;text-align:center;\"><b>COMPILATION FAILURE</b></td>");
                     }
                 }
             }
@@ -138,7 +146,6 @@ public class ReportCreater {
 
 
     public static void main(String[] args) throws Exception {
-        System.out.println(args[0]);
         ReportCreater creater = new ReportCreater(args[0]);
         creater.getRepertoriesInCurrentDir();
         creater.createReportFromXmls(args[1]);
