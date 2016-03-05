@@ -7,6 +7,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.DocumentBuilder;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
 
 /**
  * @author Nicolas HORY
@@ -49,6 +50,7 @@ public class ReportCreater {
             file.write("<div class=\"container\">\n" +
                     "  <div class=\"page-header\">\n" +
                     "    <h1>Rapport sur les mutations</h1>      \n" +
+                    "    <h2>Cliquez sur une case du tableau pour avoir un aperçu du fichier de test concerné, ainsi que des indications sur d'où peuvent provenir les erreurs.</h2>\n" +
                     "  </div>\n" +
                     " <div id=\"tableResults\">");
             file.write("<table style=\"border-collapse : collapse; border-spacing : 2px;\">");
@@ -155,7 +157,16 @@ public class ReportCreater {
                                 Element root = doc.getDocumentElement();
 
                                 String failure = root.getAttribute("failures");
-                                if (Integer.parseInt(failure) == 0) { // Aucun fail: case verte
+                                String errors = root.getAttribute("errors");
+                                NodeList testsList = doc.getElementsByTagName("testcase");
+                                for (int i = 0; i < testsList.getLength(); i++) {
+                                    Element node = (Element)testsList.item(i);
+                                    if (node.hasChildNodes()) {
+                                        System.out.println("UNE FAILURE ICI");
+                                        System.out.println(filePath + "/" + repWithReport + "/reports/" + xmlFile);
+                                    }
+                                }
+                                if (Integer.parseInt(failure) == 0 && Integer.parseInt(errors) == 0) { // Aucun fail: case verte
                                     out.write("<td style=\"background:green\"></td>");
                                 } else {
                                     out.write("<td style=\"background:red\"></td>");
