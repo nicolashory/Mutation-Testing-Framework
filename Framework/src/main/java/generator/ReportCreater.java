@@ -7,6 +7,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.DocumentBuilder;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 /**
@@ -126,6 +127,28 @@ public class ReportCreater {
             }
             file.write("</tr>");
     }
+
+    private void createHtmlFile(FileWriter writer, String msgForUser) {
+        try {
+            writer.write("<!doctype html><html><head><meta charset=\"utf-8\"><title>Rapport sur les mutations</title>\n" +
+                    "<meta name = \"description\" content = \"\" ><meta name = \"viewport\" content = \"width=device-width\">");
+            writer.write("<style>div, h1 {margin:auto;}" +
+                    "        .page-header, div{text-align: center;}" +
+                    "    </style>");
+            writer.write("</head><body>");
+            writer.write("<div class=\"container\">\n" +
+                    "  <div class=\"page-header\">\n" +
+                    "    <h1>Fichier de test concerné</h1>      \n" +
+                    "    <h2>Eventuel message de failure ou d'erreur:</h2>\n" +
+                    "  </div>\n");
+            writer.write("<div style=\"color:red\";>" + msgForUser + "</div");
+            writer.write("</body></html>");
+            writer.close();
+        } catch (Exception e) {
+            // Erreur sur le writer
+        }
+    }
+
     private void createReportFromXmls(String frameworkPath) {
         String xmlFile="";
         try {
@@ -159,17 +182,34 @@ public class ReportCreater {
                                 String failure = root.getAttribute("failures");
                                 String errors = root.getAttribute("errors");
                                 NodeList testsList = doc.getElementsByTagName("testcase");
+                                String msgForUser="";
                                 for (int i = 0; i < testsList.getLength(); i++) {
                                     Element node = (Element)testsList.item(i);
-                                    if (node.hasChildNodes()) {
-                                        System.out.println("UNE FAILURE ICI");
-                                        System.out.println(filePath + "/" + repWithReport + "/reports/" + xmlFile);
+                                    if (node.getElementsByTagName("failure").getLength() > 0) {
+                                        Element failElement = (Element)node.getElementsByTagName("failure").item(0);
+                                        msgForUser += failElement.getAttribute("message");
+                                    } else if (node.getElementsByTagName("error").getLength() > 0) {
+                                        Element errorElement = (Element)node.getElementsByTagName("error").item(0);
+                                        msgForUser += errorElement.getAttribute("message");
                                     }
                                 }
+                                String nameHtmlFile = filePath  + repWithReport + file;
+                                nameHtmlFile = nameHtmlFile.replace(".xml", ".html");
+                                File htmlFile = new File(nameHtmlFile);
+                                FileWriter outHtml = new FileWriter(htmlFile);
+                                createHtmlFile(outHtml, msgForUser);
                                 if (Integer.parseInt(failure) == 0 && Integer.parseInt(errors) == 0) { // Aucun fail: case verte
-                                    out.write("<td style=\"background:green\"></td>");
+                                    out.write("<td style=\"background:green\"><a href=\"" + nameHtmlFile + "\" target=\"_blank\">\n" +
+                                            "  <div>\n" +
+                                            "     Link Text\n" +
+                                            "  </div>\n" +
+                                            "</a></td>");
                                 } else {
-                                    out.write("<td style=\"background:red\"></td>");
+                                    out.write("<td style=\"background:red\"><a href=\"" + nameHtmlFile +"\" target=\"_blank\">\n" +
+                                            "  <div>\n" +
+                                            "     Link Text\n" +
+                                            "  </div>\n" +
+                                            "</a></td>");
                                     hasNoFail = false;
                                 }
 
