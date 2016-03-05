@@ -128,12 +128,36 @@ public class ReportCreater {
             file.write("</tr>");
     }
 
-    private void createHtmlFile(FileWriter writer, String msgForUser) {
+    private void writeTestFileinHtml(FileWriter writer, String input) {
+        try {
+            FileReader reader=new FileReader(input);
+            BufferedWriter writeBuffer = new BufferedWriter(writer);
+            BufferedReader buffer = new BufferedReader(reader);
+            writeBuffer.write("<div id=\"testFile\">");
+            String line;
+            int i = 1;
+            while((line=buffer.readLine()) != null) {
+                writeBuffer.write(i + "&nbsp");
+                writeBuffer.write(line);
+                writeBuffer.write("<br/>");
+                i++;
+            }
+            writeBuffer.write("</div>");
+            reader.close();
+            writeBuffer.close();
+        }
+        catch(IOException e) {
+            System.out.println(e);
+        }
+    }
+
+    private void createHtmlFile(FileWriter writer, String msgForUser, String nameTestFile) {
         try {
             writer.write("<!doctype html><html><head><meta charset=\"utf-8\"><title>Rapport sur les mutations</title>\n" +
                     "<meta name = \"description\" content = \"\" ><meta name = \"viewport\" content = \"width=device-width\">");
             writer.write("<style>div, h1 {margin:auto;}" +
                     "        .page-header, div{text-align: center;}" +
+                    "        #testFile{text-align:left;}" +
                     "    </style>");
             writer.write("</head><body>");
             writer.write("<div class=\"container\">\n" +
@@ -141,7 +165,8 @@ public class ReportCreater {
                     "    <h1>Fichier de test concerné</h1>      \n" +
                     "    <h2>Eventuel message de failure ou d'erreur:</h2>\n" +
                     "  </div>\n");
-            writer.write("<div style=\"color:red\";>" + msgForUser + "</div");
+            writer.write("<div style=\"color:red\";>" + msgForUser + "</div>");
+            writeTestFileinHtml(writer, nameTestFile);
             writer.write("</body></html>");
             writer.close();
         } catch (Exception e) {
@@ -176,12 +201,15 @@ public class ReportCreater {
                                 DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
                                 Document doc = dBuilder.parse(filePath + "/" + repWithReport + "/reports/" + xmlFile);
                                 doc.getDocumentElement().normalize();
-
                                 Element root = doc.getDocumentElement();
-
                                 String failure = root.getAttribute("failures");
                                 String errors = root.getAttribute("errors");
                                 NodeList testsList = doc.getElementsByTagName("testcase");
+                                String testFile = ((Element)testsList.item(0)).getAttribute("classname");
+                                testFile = testFile.replace(".", "/");
+                                testFile += ".java";
+                                String PathWithoutResult = filePath.replace("/Result", "");
+                                String nameTestFile = PathWithoutResult + "/src/test/java/" + testFile;
                                 String msgForUser="";
                                 for (int i = 0; i < testsList.getLength(); i++) {
                                     Element node = (Element)testsList.item(i);
@@ -197,7 +225,7 @@ public class ReportCreater {
                                 nameHtmlFile = nameHtmlFile.replace(".xml", ".html");
                                 File htmlFile = new File(nameHtmlFile);
                                 FileWriter outHtml = new FileWriter(htmlFile);
-                                createHtmlFile(outHtml, msgForUser);
+                                createHtmlFile(outHtml, msgForUser, nameTestFile);
                                 if (Integer.parseInt(failure) == 0 && Integer.parseInt(errors) == 0) { // Aucun fail: case verte
                                     out.write("<td style=\"background:green\"><a href=\"" + nameHtmlFile + "\" target=\"_blank\">\n" +
                                             "  <div>\n" +
