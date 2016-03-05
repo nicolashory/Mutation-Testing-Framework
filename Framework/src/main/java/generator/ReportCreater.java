@@ -67,7 +67,7 @@ public class ReportCreater {
                     "\n" +
                     "        var data = google.visualization.arrayToDataTable([\n" +
                     "            ['Tests par mutations', 'Résultats'],\n" +
-                    "            ['Mutants vivants'," + (nbSuccess - 2) + "],\n" +
+                    "            ['Mutants vivants'," + (nbSuccess - 1) + "],\n" +
                     "            ['Mutants tués'," + nbFails + "],\n" +
                     "            ['Mutants morts-nés'," + nbCompileFail +"],\n" +
                     "        ]);\n" +
@@ -141,6 +141,7 @@ public class ReportCreater {
                 }
                 if (hasReports) {
                     List<String> filesFromRep = Arrays.asList(new File(filePath + "/" + repWithReport + "/reports").list());
+                    boolean hasNoFail = true;
                     out.write("<tr><td>" + repWithReport + "</td>");
                     for (String file : filesFromRep) {
                         if (file.endsWith("xml")) {
@@ -156,10 +157,9 @@ public class ReportCreater {
                                 String failure = root.getAttribute("failures");
                                 if (Integer.parseInt(failure) == 0) { // Aucun fail: case verte
                                     out.write("<td style=\"background:green\"></td>");
-                                    nbSuccess++;
                                 } else {
                                     out.write("<td style=\"background:red\"></td>");
-                                    nbFails++;
+                                    hasNoFail = false;
                                 }
 
                             } catch (Exception e) {
@@ -168,10 +168,12 @@ public class ReportCreater {
                         }
                     }
                     out.write("</tr>");
+                    if (hasNoFail) nbSuccess++;
+                    else nbFails++;
                 } else {
                     out.write("<tr><td>" + repWithReport + "</td>");
+                    nbCompileFail++;
                     for (int i = 0; i < nbTest; i++) {
-                        nbCompileFail++;
                         out.write("<td style=\"background:#8A4B08;text-align:center;color:white;\"><b>COMPILATION FAILURE</b></td>");
                     }
                 }
