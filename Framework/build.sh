@@ -20,7 +20,7 @@ frameworkFolder=$(pwd)
 echo -e "Lancement de Maven Install pour le framework"
 mvn install
 
-# 2. Pour chaque processor dans notre framework (sauvegardés dans un fichier config?)
+# 2. Pour chaque processor dans notre framework
 #        Faire -> Editer le pom de l'application en mettant uniquement le bon processor dedant
 #        Lancer le mvn compile de l'application avec en option le buildirectory souhaité pour cette version du mutant
 #        Lancer le maven surefire test de l'application avec les bonnes options (en modifiant le dossier des sources par le buildirectory utilisé)
@@ -56,12 +56,13 @@ do
     rm -rf Result/$mutation/classes Result/$mutation/maven-status Result/$mutation/spoon-maven-plugin
 done
 
-# 3. Generer le rapport html a partir de tous les rapports générés: java ReportCreater
+#Remise en état d'origine du pom.xml
 cd $1
 sed -i -e "s/<processors>.*<\/processors>/<processors><\/processors>/g" pom.xml
+
+# 3. Generer le rapport html a partir de tous les rapports générés: java ReportCreater
 cd $frameworkFolder/target/classes
 java generator.ReportCreater $1/Result/ $frameworkFolder
 
 # 4. Clean l'ensemble des dossiers créés pour la génération et utilisation des mutants
-#rm ReportCreater.class
 rm -rf $1/target $frameworkFolder/target
