@@ -13,7 +13,7 @@ public class OneByClass implements Selector
     private Class<? extends CtElement> type;
 
     private boolean wasValidated;
-    private CtClass<?> latestClass;
+    private String latestClass;
 
     /**
      * Constructor that gives a sample of the element to select
@@ -27,10 +27,15 @@ public class OneByClass implements Selector
 
     @Override
     public boolean isToBeProcessed(CtElement candidate) {
-        if(!latestClass.equals(candidate.getParent(CtClass.class)))
+        if(!latestClass.equals(candidate.getParent(CtClass.class).getSimpleName()))
         {
             if (candidate.getParent(CtClass.class) != null) {
-                latestClass = candidate.getParent(CtClass.class);
+                latestClass = candidate.getParent(CtClass.class).getSimpleName();
+
+                for(int i = 0; i <10; i++)
+                {
+                    System.out.println("Name : " + candidate.getParent(CtClass.class).getSimpleName() + "\n\n");
+                }
                 wasValidated = false;
             }
         }
@@ -48,10 +53,6 @@ public class OneByClass implements Selector
 
     private boolean testType(CtElement candidate)
     {
-        if (candidate.getClass() != null)
-            return candidate.getClass().equals(type.getClass());
-
-        else
-            return false;
+            return candidate.getClass() != null && candidate.getClass().equals(type.getClass());
     }
 }

@@ -1,9 +1,14 @@
 package mutation;
 
+import core.Selector;
+import selector.OneByClass;
+import selector.OneByMethod;
 import spoon.processing.AbstractProcessor;
 import spoon.reflect.code.BinaryOperatorKind;
 import spoon.reflect.code.CtBinaryOperator;
+import spoon.reflect.code.CtFor;
 import spoon.reflect.declaration.CtElement;
+import spoon.reflect.declaration.CtMethod;
 
 /**
  * Mutation that switches all binary operators to +
@@ -12,16 +17,17 @@ import spoon.reflect.declaration.CtElement;
 public class BinaryPlusOperatorMutation extends AbstractProcessor<CtElement>
 {
     @Override
-    public boolean isToBeProcessed(CtElement candidate) {
-        return candidate instanceof CtBinaryOperator;
-    }
-
-    @Override
     public void process(CtElement candidate) {
-        if (!(candidate instanceof CtBinaryOperator)) {
-            return;
-        }
         CtBinaryOperator op = (CtBinaryOperator)candidate;
+
+        if(!op.getKind().equals(BinaryOperatorKind.MINUS))
+            return;
+
+        CtMethod parent = candidate.getParent(CtMethod.class);
+
+        if (parent!=null && !parent.getSimpleName().equals("soustraction"))
+            return;
+
         op.setKind(BinaryOperatorKind.PLUS);
     }
 }

@@ -26,7 +26,7 @@ public class ForAlteratedUpdate extends AbstractProcessor<CtElement>
         CtFor op = (CtFor)candidate;
 
         // Removes all the initialisations of a for statement
-       List<CtStatement> updates = op.getForUpdate();
+        List<CtStatement> updates = op.getForUpdate();
         List<CtStatement> newUpdates = new ArrayList<CtStatement>();
 
         for(CtStatement s : updates)
