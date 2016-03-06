@@ -32,10 +32,6 @@ public class OneByClass implements Selector
             if (candidate.getParent(CtClass.class) != null) {
                 latestClass = candidate.getParent(CtClass.class).getSimpleName();
 
-                for(int i = 0; i <10; i++)
-                {
-                    System.out.println("Name : " + candidate.getParent(CtClass.class).getSimpleName() + "\n\n");
-                }
                 wasValidated = false;
             }
         }

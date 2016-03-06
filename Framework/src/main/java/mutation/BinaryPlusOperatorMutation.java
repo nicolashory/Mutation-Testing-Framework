@@ -17,16 +17,13 @@ import spoon.reflect.declaration.CtMethod;
 public class BinaryPlusOperatorMutation extends AbstractProcessor<CtElement>
 {
     @Override
+    public boolean isToBeProcessed(CtElement candidate) {
+        return new OneByMethod().isToBeProcessed(candidate);
+    }
+
+    @Override
     public void process(CtElement candidate) {
         CtBinaryOperator op = (CtBinaryOperator)candidate;
-
-        if(!op.getKind().equals(BinaryOperatorKind.MINUS))
-            return;
-
-        CtMethod parent = candidate.getParent(CtMethod.class);
-
-        if (parent!=null && !parent.getSimpleName().equals("soustraction"))
-            return;
 
         op.setKind(BinaryOperatorKind.PLUS);
     }
