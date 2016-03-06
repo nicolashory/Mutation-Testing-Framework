@@ -10,7 +10,7 @@ import spoon.reflect.declaration.CtElement;
  */
 public class OneByClass implements Selector
 {
-    private Class<? extends CtElement> type;
+    private Class<?> type;
 
     private boolean wasValidated;
     private String latestClass;
@@ -19,7 +19,7 @@ public class OneByClass implements Selector
      * Constructor that gives a sample of the element to select
      * @param element The prototype with the right type
      */
-    public OneByClass(Class<? extends CtElement> element)
+    public OneByClass(Class<?> element)
     {
         type = element;
         wasValidated = false;

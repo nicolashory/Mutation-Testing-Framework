@@ -9,6 +9,9 @@ import spoon.reflect.code.CtBinaryOperator;
 import spoon.reflect.code.CtFor;
 import spoon.reflect.declaration.CtElement;
 import spoon.reflect.declaration.CtMethod;
+import spoon.support.reflect.code.CtBinaryOperatorImpl;
+
+import java.util.function.BinaryOperator;
 
 /**
  * Mutation that switches all binary operators to +
@@ -23,6 +26,11 @@ public class BinaryPlusOperatorMutation extends AbstractProcessor<CtElement>
 
     @Override
     public void process(CtElement candidate) {
+        Selector selector = new OneByMethod();
+
+        if (!selector.isToBeProcessed(candidate))
+            return;
+
         CtBinaryOperator op = (CtBinaryOperator)candidate;
 
         op.setKind(BinaryOperatorKind.PLUS);
