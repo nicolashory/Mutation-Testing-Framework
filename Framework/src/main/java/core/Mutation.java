@@ -12,7 +12,5 @@ public interface Mutation
      * Tells how to process the element
      * @param candidate The element to process
      */
-    public static void process(CtElement candidate){
-        // Mutates nothing
-    }
+    public void process(CtElement candidate);
 }
