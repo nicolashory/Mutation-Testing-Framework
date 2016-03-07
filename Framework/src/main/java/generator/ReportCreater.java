@@ -247,11 +247,13 @@ public class ReportCreater {
                                     if (node.getElementsByTagName("failure").getLength() > 0) { // Si il y a eu failure
                                         Element failElement = (Element)node.getElementsByTagName("failure").item(0); // Récupère la failure concernée
                                         // Récupère le message pour l'utilisateur
-                                        msgForUser += failElement.getTextContent() + " ";
+                                        String tabContent[] = failElement.getTextContent().split("at ");
+                                        msgForUser += tabContent[tabContent.length - 1] + " ";
                                     } else if (node.getElementsByTagName("error").getLength() > 0) { // Si il y a eu error
                                         Element errorElement = (Element)node.getElementsByTagName("error").item(0); // Récupère l'error concernée
                                         // Récupère le message pour l'utilisateur
-                                        msgForUser += errorElement.getTextContent() + " ";
+                                        String tabContent[] = errorElement.getTextContent().split("at ");
+                                        msgForUser += tabContent[tabContent.length - 1] + " ";
                                     }
                                 }
                                 String nameHtmlFile = filePath  + repWithReport + file; // Nom du fichier html lié au clic sur case de tableau

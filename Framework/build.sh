@@ -35,6 +35,11 @@ nbMutation=${#allMutation[@]}
 
 # On se place dans l'application où on doit appliquer les mutations
 cd $1
+# Si dossier Result deja present, on le supprime
+if [ -d "./Result" ];then	\
+                echo -e "Suppression du dossier Result existant.."
+                rm -rf "./Result"	;	\
+fi
 # Creation du dossier résultat dans lequel on placera tous les dossiers générés pour les mutations
 #   et le rapport
 mkdir Result
