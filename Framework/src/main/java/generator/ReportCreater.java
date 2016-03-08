@@ -30,8 +30,14 @@ public class ReportCreater {
      * Initialise listRepertoriesToCheck avec les répertoires dans le dossier filePath
      */
     private void getRepertoriesInCurrentDir() {
+        listRepertoriesToCheck = new ArrayList<>();
         File directory = new File(filePath);
-        this.listRepertoriesToCheck= Arrays.asList(directory.list());
+        for (String subRep : directory.list()) {
+            // On ne souhaite garder que les dossiers, pas les fichiers
+            if(!subRep.contains(".")) {
+                this.listRepertoriesToCheck.add(subRep);
+            }
+        }
     }
 
     /**
@@ -188,12 +194,20 @@ public class ReportCreater {
                     "    </style>");
             writer.write("</head><body>");
             writer.write("<div class=\"container\">\n" +
-                    "  <div class=\"page-header\">\n" +
-                    "    <h1><a style=\"text-decoration:none;\" href=\"" + filePath+ "/" + repertory + "/generated-sources/spoon\">Cliquer ici pour afficher le dossier contenant le code muté.</a></h1>\n" );
+                    "  <div class=\"page-header\">\n");
+            // On met un lien vers le generated-sources
+            writer.write("<h1><a style=\"text-decoration:none;\" href=\"" + filePath + "/" + repertory + "/generated-sources/spoon\">Cliquer ici pour afficher le dossier contenant le code muté.</a></h1>\n");
+
             // Si il y a une erreur, on affiche ces deux lignes, sinon cela n'est pas nécessaire
             if (hasError) {
-                writer.write("<p>Message(s) de failure ou d'erreur: <b style=\"color:red;\">" + msgError + "</b></p>\n" +
-                             "<p>Ligne(s) associée(s): <b style=\"color:red;\">" + lineError + "</b></p>\n");
+                //On split les chaines recues pour récupérer tous les messages d'erreurs et les lignes associées
+                String tabLines[] = lineError.split("-");
+                String tabMsg[] = msgError.split("-");
+                //Pour chaque erreur ou failure on affiche le message et la ligne
+                for (int i = 0; i < tabLines.length; i++) {
+                    writer.write("<p>Message de failure ou d'erreur: <b style=\"color:red;\">" + tabMsg[i] + "</b></p>\n" +
+                            "<p>Ligne associée: <b style=\"color:red;\">" + tabLines[i] + "</b></p>\n");
+                }
             }
             writer.write("</div>\n");
 
@@ -250,15 +264,15 @@ public class ReportCreater {
                                     if (node.getElementsByTagName("failure").getLength() > 0) { // Si il y a eu failure
                                         Element failElement = (Element)node.getElementsByTagName("failure").item(0); // Récupère la failure concernée
                                         // Récupère les messages pour l'utilisateur
-                                        msgOfError = failElement.getAttribute("message");
+                                        msgOfError += failElement.getAttribute("message") + "-";
                                         String tabContent[] = failElement.getTextContent().split("at ");
-                                        lineOfError += tabContent[tabContent.length - 1] + " ";
+                                        lineOfError += tabContent[tabContent.length - 1] + "-";
                                     } else if (node.getElementsByTagName("error").getLength() > 0) { // Si il y a eu error
                                         Element errorElement = (Element)node.getElementsByTagName("error").item(0); // Récupère l'error concernée
                                         // Récupère les messages pour l'utilisateur
-                                        msgOfError = errorElement.getAttribute("message");
+                                        msgOfError += errorElement.getAttribute("message") + "-";
                                         String tabContent[] = errorElement.getTextContent().split("at ");
-                                        lineOfError += tabContent[tabContent.length - 1] + " ";
+                                        lineOfError += tabContent[tabContent.length - 1] + "-";
                                     }
                                 }
                                 String nameHtmlFile = filePath  + repWithReport + file; // Nom du fichier html lié au clic sur case de tableau
@@ -266,13 +280,19 @@ public class ReportCreater {
                                 File htmlFile = new File(nameHtmlFile); // On crée le fichier html
                                 FileWriter outHtml = new FileWriter(htmlFile); // FileWriter lié au fichier html
                                 boolean hasError = (!msgOfError.isEmpty()); // Si message d'erreur vide, boolean a false
-                                createHtmlFile(outHtml, lineOfError, msgOfError, nameTestFile, hasError, repWithReport); // On remplit le fichier html avec les informations pour l'utilisateur (si nécessaire)
+                                if(!repWithReport.equals("NoMutation")) {
+                                    createHtmlFile(outHtml, lineOfError, msgOfError, nameTestFile, hasError, repWithReport); // On remplit le fichier html avec les informations pour l'utilisateur (si nécessaire)
+                                }
                                 if (Integer.parseInt(failure) == 0 && Integer.parseInt(errors) == 0) { // Aucun fail: case verte
-                                    out.write("<td style=\"background:green;color:green;\"><a style=\"color:green;\" href=\"" + nameHtmlFile + "\" target=\"_blank\">\n" +
+                                    out.write("<td style=\"background:green;color:green;\">");
+                                    if(!repWithReport.equals("NoMutation")) {
+                                        out.write("<a style=\"color:green;\" href=\"" + nameHtmlFile + "\" target=\"_blank\">\n" +
                                             "  <div>\n" +
                                             "     Fichier test\n" +
                                             "  </div>\n" +
-                                            "</a></td>");
+                                            "</a>");
+                                    }
+                                    out.write("</td>");
                                 } else { // Au moins un fail ou une error: case rouge
                                     out.write("<td style=\"background:red;color:red;\"><a style=\"color:red;\" href=\"" + nameHtmlFile +"\" target=\"_blank\">\n" +
                                             "  <div>\n" +
