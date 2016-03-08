@@ -192,13 +192,8 @@ public class ReportCreater {
                     "    <h1><a style=\"text-decoration:none;\" href=\"" + filePath+ "/" + repertory + "/generated-sources/spoon\">Cliquer ici pour afficher le dossier contenant le code muté.</a></h1>\n" );
             // Si il y a une erreur, on affiche ces deux lignes, sinon cela n'est pas nécessaire
             if (hasError) {
-                String splitLine[] = lineError.split("\\t"); // On récupère toutes les lignes d'erreur dans un tableau
-                String splitMsg[] = msgError.split("\\t");  // On récupère tous les messages d'erreur dans un tableau
-                // Pour chaque erreur on affiche le message et la ligne
-                for (int i = 0; i < splitLine.length; i++) {
-                    writer.write("<p>Message de failure ou d'erreur: <b style=\"color:red;\">" + splitMsg[i] + "</b></p>\n" +
-                                "<p>Ligne associée: <b style=\"color:red;\">" + splitLine[i] + "</b></p>\n");
-                }
+                writer.write("<p>Message(s) de failure ou d'erreur: <b style=\"color:red;\">" + msgError + "</b></p>\n" +
+                             "<p>Ligne(s) associée(s): <b style=\"color:red;\">" + lineError + "</b></p>\n");
             }
             writer.write("</div>\n");
 
@@ -257,13 +252,13 @@ public class ReportCreater {
                                         // Récupère les messages pour l'utilisateur
                                         msgOfError = failElement.getAttribute("message");
                                         String tabContent[] = failElement.getTextContent().split("at ");
-                                        lineOfError += tabContent[tabContent.length - 1] + "\t";
+                                        lineOfError += tabContent[tabContent.length - 1] + " ";
                                     } else if (node.getElementsByTagName("error").getLength() > 0) { // Si il y a eu error
                                         Element errorElement = (Element)node.getElementsByTagName("error").item(0); // Récupère l'error concernée
                                         // Récupère les messages pour l'utilisateur
                                         msgOfError = errorElement.getAttribute("message");
                                         String tabContent[] = errorElement.getTextContent().split("at ");
-                                        lineOfError += tabContent[tabContent.length - 1] + "\t";
+                                        lineOfError += tabContent[tabContent.length - 1] + " ";
                                     }
                                 }
                                 String nameHtmlFile = filePath  + repWithReport + file; // Nom du fichier html lié au clic sur case de tableau
