@@ -27,3 +27,7 @@ Nous pourrions faire évoluer ce script vers une plugin maven, qui ne serait don
 Si un utilisateur utilise notre frameweork plusieurs fois à la suite, il relance la chaine de build au complet, ce qui comprends donc l'installation de notre framework.
 Il serait interessant de n'executer que les étapes nécessaires lors de la réutilisation du framework.
 
+## Mise en avant des éditions
+
+Actuellement, notre rapport sait indiquer quel test échoue pour chaque processor, et redirige vers les fichiers sources correspondants à ces mutations.
+Il serait interessant pour la suite de sauvegarder directement les modifications exactes effectuées sur le code dans une fichier de log, afin de pouvoir mettre en avant ces données dans notre rapport, et ainsi simplifier la recherche du code muté pour l'utilisateur.
