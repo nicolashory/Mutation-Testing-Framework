@@ -277,10 +277,10 @@ public class ReportCreater {
                                 }
                                 String nameHtmlFile = filePath  + repWithReport + file; // Nom du fichier html lié au clic sur case de tableau
                                 nameHtmlFile = nameHtmlFile.replace(".xml", ".html"); // On remplace l'extension xml par html
-                                File htmlFile = new File(nameHtmlFile); // On crée le fichier html
-                                FileWriter outHtml = new FileWriter(htmlFile); // FileWriter lié au fichier html
-                                boolean hasError = (!msgOfError.isEmpty()); // Si message d'erreur vide, boolean a false
                                 if(!repWithReport.equals("NoMutation")) {
+                                    File htmlFile = new File(nameHtmlFile); // On crée le fichier html
+                                    FileWriter outHtml = new FileWriter(htmlFile); // FileWriter lié au fichier html
+                                    boolean hasError = (!msgOfError.isEmpty()); // Si message d'erreur vide, boolean a false
                                     createHtmlFile(outHtml, lineOfError, msgOfError, nameTestFile, hasError, repWithReport); // On remplit le fichier html avec les informations pour l'utilisateur (si nécessaire)
                                 }
                                 if (Integer.parseInt(failure) == 0 && Integer.parseInt(errors) == 0) { // Aucun fail: case verte
