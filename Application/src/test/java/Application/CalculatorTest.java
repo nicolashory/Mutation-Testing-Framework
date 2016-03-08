@@ -29,4 +29,16 @@ public class CalculatorTest
     {
         assertEquals(Calculator.for10(), 10);
     }
+
+    @Test(timeout=1000)
+    public void testMax()
+    {
+        assertTrue(Calculator.max(1,2) == 2);
+    }
+
+    @Test(timeout=1000)
+    public void testIfStat()
+    {
+        assertTrue(Calculator.ifStat() == 7);
+    }
 }

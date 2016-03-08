@@ -24,4 +24,26 @@ public class Calculator
 
         return a;
     }
+
+    public static int max(int a, int b)
+    {
+        if (a > b)
+            return a;
+        else
+            return b;
+    }
+
+    public static int ifStat()
+    {
+        int j =0;
+        for(int i = 0; i < 5; i++)
+        {
+            if ( i%2 == 0)
+                j++;
+            else
+                j+=2;
+        }
+
+        return j;
+    }
 }
