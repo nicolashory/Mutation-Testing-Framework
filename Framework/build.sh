@@ -83,7 +83,7 @@ sed -i -e "s/<processors>.*<\/processors>/<processors><\/processors>/g" pom.xml
 # 3. Generer le rapport html a partir de tous les rapports générés: java ReportCreater
 echo -e "Creation du rapport final..."
 cd $frameworkFolder/target/classes
-java generator.ReportCreater $1/Result/ $frameworkFolder
+java generator.ReportCreater $1/Result $frameworkFolder
 
 # 4. Clean l'ensemble des dossiers créés pour la génération et utilisation des mutants
 rm -rf $1/target $frameworkFolder/target
