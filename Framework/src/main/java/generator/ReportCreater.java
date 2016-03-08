@@ -178,7 +178,7 @@ public class ReportCreater {
      * @param hasError Booleen indiquant si il y a un message d'erreur a afficher ou pas
      * @param nameTestFile Le nom du fichier test
      */
-    private void createHtmlFile(FileWriter writer, String lineError, String msgError, String nameTestFile, boolean hasError) {
+    private void createHtmlFile(FileWriter writer, String lineError, String msgError, String nameTestFile, boolean hasError, String repertory) {
         try {
             writer.write("<!doctype html><html><head><meta charset=\"utf-8\"><title>Rapport sur les mutations</title>\n" +
                     "<meta name = \"description\" content = \"\" ><meta name = \"viewport\" content = \"width=device-width\">");
@@ -189,7 +189,7 @@ public class ReportCreater {
             writer.write("</head><body>");
             writer.write("<div class=\"container\">\n" +
                     "  <div class=\"page-header\">\n" +
-                    "    <h1>Fichier de test concerné</h1>      \n" );
+                    "    <h1>Dossier contenant le code muté:</h1> <b style=\"color:red;\">" + filePath+ "/" + repertory + "/generated-sources/spoon</b>\n" );
             // Si il y a une erreur, on affiche ces deux lignes, sinon cela n'est pas nécessaire
             if (hasError) {
                 writer.write("<p>Message de failure ou d'erreur: <b style=\"color:red;\">" + msgError + "</b></p>\n" +
@@ -266,7 +266,7 @@ public class ReportCreater {
                                 File htmlFile = new File(nameHtmlFile); // On crée le fichier html
                                 FileWriter outHtml = new FileWriter(htmlFile); // FileWriter lié au fichier html
                                 boolean hasError = (!msgOfError.isEmpty()); // Si message d'erreur vide, boolean a false
-                                createHtmlFile(outHtml, lineOfError, msgOfError, nameTestFile, hasError); // On remplit le fichier html avec les informations pour l'utilisateur (si nécessaire)
+                                createHtmlFile(outHtml, lineOfError, msgOfError, nameTestFile, hasError, repWithReport); // On remplit le fichier html avec les informations pour l'utilisateur (si nécessaire)
                                 if (Integer.parseInt(failure) == 0 && Integer.parseInt(errors) == 0) { // Aucun fail: case verte
                                     out.write("<td style=\"background:green;color:green;\"><a style=\"color:green;\" href=\"" + nameHtmlFile + "\" target=\"_blank\">\n" +
                                             "  <div>\n" +
