@@ -7,7 +7,6 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.DocumentBuilder;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 /**
@@ -37,10 +36,9 @@ public class ReportCreater {
 
     /**
      * Génère le début du fichier html, avec les balises de style et l'entête
-     * @param file
-     * @param frameworkPath
+     * @param file Le FileWriter du rapport html
      */
-    private void generateBeginReport(FileWriter file, String frameworkPath) {
+    private void generateBeginReport(FileWriter file) {
         try {
             file.write("<!doctype html><html><head><meta charset=\"utf-8\"><title>Rapport sur les mutations</title>");
             file.write("<meta name = \"description\" content = \"\" ><meta name = \"viewport\" content = \"width=device-width\">");
@@ -67,7 +65,7 @@ public class ReportCreater {
 
     /**
      * Génère le diagramme Piechart résumant les trois types de mutants (tués, vivants, morts-nés)
-     * @param file
+     * @param file Le FileWriter associé au fichier dans lequel générer le piechart
      */
     private void generatePiechart(FileWriter file) {
         try {
@@ -101,10 +99,9 @@ public class ReportCreater {
 
     /**
      * Génère la fin du rapport html
-     * @param file
-     * @param frameworkPath
+     * @param file Le fichier html (FileWriter)
      */
-    private void generateEndReport(FileWriter file, String frameworkPath) {
+    private void generateEndReport(FileWriter file) {
         try {
             file.write("</table>");
             file.write("</div>");
@@ -119,7 +116,7 @@ public class ReportCreater {
 
     /**
      * Génère la première ligne du tableau récapitulatif, avec les noms des fichiers tests
-     * @param file
+     * @param file Le FileWriter associé au fichier rapport
      * @throws IOException
      */
     private void generateFirstLineTable(FileWriter file) throws IOException {
@@ -146,8 +143,8 @@ public class ReportCreater {
 
     /**
      * Ecrit le contenu d'un fichier dans un bloc html
-     * @param writer
-     * @param input
+     * @param writer Le FileWriter associé au fichier
+     * @param input Le fichier que l'on lit et qu'on veut convertir en html
      */
     private void writeTestFileinHtml(FileWriter writer, String input) {
         try {
@@ -169,17 +166,19 @@ public class ReportCreater {
             writeBuffer.close();
         }
         catch(IOException e) {
-            System.out.println(e);
+            e.printStackTrace();
         }
     }
 
     /**
      * Crée un fichier html relatif à une case du tableau récapitulatif
-     * @param writer
-     * @param msgForUser
-     * @param nameTestFile
+     * @param writer Le FileWriter pour écrire dans le fichier
+     * @param lineError Le message disant la ligne d'erreur du test
+     * @param msgError Le message correspondant a l'eventuelle erreur
+     * @param hasError Booleen indiquant si il y a un message d'erreur a afficher ou pas
+     * @param nameTestFile Le nom du fichier test
      */
-    private void createHtmlFile(FileWriter writer, String msgForUser, String nameTestFile) {
+    private void createHtmlFile(FileWriter writer, String lineError, String msgError, String nameTestFile, boolean hasError) {
         try {
             writer.write("<!doctype html><html><head><meta charset=\"utf-8\"><title>Rapport sur les mutations</title>\n" +
                     "<meta name = \"description\" content = \"\" ><meta name = \"viewport\" content = \"width=device-width\">");
@@ -190,10 +189,14 @@ public class ReportCreater {
             writer.write("</head><body>");
             writer.write("<div class=\"container\">\n" +
                     "  <div class=\"page-header\">\n" +
-                    "    <h1>Fichier de test concerné</h1>      \n" +
-                    "    <h2>Eventuel message de failure ou d'erreur:</h2>\n" +
-                    "  </div>\n");
-            writer.write("<div style=\"color:red\";>" + msgForUser + "</div>");
+                    "    <h1>Fichier de test concerné</h1>      \n" );
+            // Si il y a une erreur, on affiche ces deux lignes, sinon cela n'est pas nécessaire
+            if (hasError) {
+                writer.write("<p>Message de failure ou d'erreur: <b style=\"color:red;\">" + msgError + "</b></p>\n" +
+                             "<p>Ligne associée: <b style=\"color:red;\">" + lineError + "</b></p>\n");
+            }
+            writer.write("</div>\n");
+
             writeTestFileinHtml(writer, nameTestFile); // Copie le contenu du fichier java concerné dans le fichier html
             writer.write("</body></html>");
             writer.close();
@@ -204,13 +207,12 @@ public class ReportCreater {
 
     /**
      * Crée le rapport final à partir des fichiers report xml
-     * @param frameworkPath
      */
-    private void createReportFromXmls(String frameworkPath) {
+    private void createReportFromXmls() {
         try {
             File finalReport = new File(filePath + "MutationReport.html"); // On crée le fichier MutationReport.html
             FileWriter out = new FileWriter(finalReport); // FileWriter pour écrire dans le fichier
-            generateBeginReport(out,frameworkPath); // On génère le début du fichier
+            generateBeginReport(out); // On génère le début du fichier
             generateFirstLineTable(out); // On génère la première ligne du tableau
             for (String repWithReport : listRepertoriesToCheck) { // On parcourt les dossier dans Result
                 boolean hasReports = false;
@@ -241,26 +243,30 @@ public class ReportCreater {
                                 testFile += ".java"; // On rajoute l'extension ".java"
                                 String PathWithoutResult = filePath.replace("/Result", ""); // On supprime le /Result du filePath
                                 String nameTestFile = PathWithoutResult + "/src/test/java/" + testFile; // Le fichier test .java
-                                String msgForUser=""; // Message d'information pour l'utilisateur
+                                String msgOfError=""; // Message de l'erreur
+                                String lineOfError=""; // Ligne de l'erreur
                                 for (int i = 0; i < testsList.getLength(); i++) { // On parcourt les testcase
                                     Element node = (Element)testsList.item(i);
                                     if (node.getElementsByTagName("failure").getLength() > 0) { // Si il y a eu failure
                                         Element failElement = (Element)node.getElementsByTagName("failure").item(0); // Récupère la failure concernée
-                                        // Récupère le message pour l'utilisateur
+                                        // Récupère les messages pour l'utilisateur
+                                        msgOfError = failElement.getAttribute("message");
                                         String tabContent[] = failElement.getTextContent().split("at ");
-                                        msgForUser += tabContent[tabContent.length - 1] + " ";
+                                        lineOfError += tabContent[tabContent.length - 1] + " ";
                                     } else if (node.getElementsByTagName("error").getLength() > 0) { // Si il y a eu error
                                         Element errorElement = (Element)node.getElementsByTagName("error").item(0); // Récupère l'error concernée
-                                        // Récupère le message pour l'utilisateur
+                                        // Récupère les messages pour l'utilisateur
+                                        msgOfError = errorElement.getAttribute("message");
                                         String tabContent[] = errorElement.getTextContent().split("at ");
-                                        msgForUser += tabContent[tabContent.length - 1] + " ";
+                                        lineOfError += tabContent[tabContent.length - 1] + " ";
                                     }
                                 }
                                 String nameHtmlFile = filePath  + repWithReport + file; // Nom du fichier html lié au clic sur case de tableau
                                 nameHtmlFile = nameHtmlFile.replace(".xml", ".html"); // On remplace l'extension xml par html
                                 File htmlFile = new File(nameHtmlFile); // On crée le fichier html
                                 FileWriter outHtml = new FileWriter(htmlFile); // FileWriter lié au fichier html
-                                createHtmlFile(outHtml, msgForUser, nameTestFile); // On remplit le fichier html avec les informations pour l'utilisateur
+                                boolean hasError = (!msgOfError.isEmpty()); // Si message d'erreur vide, boolean a false
+                                createHtmlFile(outHtml, lineOfError, msgOfError, nameTestFile, hasError); // On remplit le fichier html avec les informations pour l'utilisateur (si nécessaire)
                                 if (Integer.parseInt(failure) == 0 && Integer.parseInt(errors) == 0) { // Aucun fail: case verte
                                     out.write("<td style=\"background:green;color:green;\"><a style=\"color:green;\" href=\"" + nameHtmlFile + "\" target=\"_blank\">\n" +
                                             "  <div>\n" +
@@ -292,7 +298,7 @@ public class ReportCreater {
                     }
                 }
             }
-            generateEndReport(out, frameworkPath); // On génère la fin du rapport
+            generateEndReport(out); // On génère la fin du rapport
             out.close();
         } catch (IOException e) {
             e.printStackTrace();
@@ -302,6 +308,6 @@ public class ReportCreater {
     public static void main(String[] args) throws Exception {
         ReportCreater creater = new ReportCreater(args[0]);
         creater.getRepertoriesInCurrentDir();
-        creater.createReportFromXmls(args[1]);
+        creater.createReportFromXmls();
     }
 }
