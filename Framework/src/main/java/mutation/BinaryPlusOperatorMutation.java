@@ -3,6 +3,7 @@ package mutation;
 import core.Selector;
 import selector.OneByClass;
 import selector.OneByMethod;
+import selector.RandomSelector;
 import spoon.processing.AbstractProcessor;
 import spoon.reflect.code.BinaryOperatorKind;
 import spoon.reflect.code.CtBinaryOperator;
@@ -26,7 +27,7 @@ public class BinaryPlusOperatorMutation extends AbstractProcessor<CtElement>
 
     @Override
     public void process(CtElement candidate) {
-        Selector selector = new OneByMethod();
+        Selector selector = new RandomSelector(1000);
 
         if (!selector.isToBeProcessed(candidate))
             return;

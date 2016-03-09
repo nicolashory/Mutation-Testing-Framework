@@ -6,7 +6,7 @@ Il faut commencer par inclure la dépendance maven de notre framework dans le pr
       <groupId>devops.2.3</groupId>
         <artifactId>master</artifactId>
         <version>1.0-SNAPSHOT</version>
-        <relativePath>../../$cheminVersFrameWork/src/main/resources/pom.xml>
+        <relativePath>../../$cheminVersFrameWork/src/main/resources/pom.xml</relativePath>
     </parent>
 
 Cela permet de lier notre pom de base à celui de votre projet, afin que notre script puisse s'exécuter.
