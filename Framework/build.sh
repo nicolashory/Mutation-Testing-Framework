@@ -18,7 +18,7 @@ frameworkFolder=$(pwd)
 
 #1: On lance le maven install
 echo -e "Lancement de Maven Install pour le framework..."
-mvn install &> /dev/null
+mvn install &>/dev/null
 echo -e "Maven Install: FAIT"
 echo -e "--------------------------------------------------"
 
@@ -53,7 +53,7 @@ mkdir Result
 
 mkdir Result/NoMutation
 echo -e "Lancement des tests sur le code de base..."
-mvn test -DreportDirectory=./Result/NoMutation/reports &> /dev/null
+mvn test -DreportDirectory=./Result/NoMutation/reports &>/dev/null
 echo -e "Tests sur le code de base: FAIT"
 echo -e "--------------------------------------------------"
 
@@ -66,7 +66,7 @@ echo -e "--------------------------------------------------"
 for mutation in ${allMutation[@]}
 do
     mkdir Result/$mutation
-    sed -i -e "s/<processors>.*<\/processors>/<processors><processor>mutation.$mutation<\/processor><\/processors>/g" pom.xml
+    sed -i -e "s/<processors>.*<\/processors>/<processors><processor>mutation.$mutation<\/processor><\/processors>/g" $frameworkFolder/src/main/resources/pom.xml
     echo -e "Application de la mutation" $mutation "..."
     mvn compile -DbuildDirectory=./Result/$mutation &> /dev/null
     mvn test -DreportDirectory=./Result/$mutation/reports &> /dev/null
@@ -78,7 +78,7 @@ done
 
 #Remise en état d'origine du pom.xml
 cd $1
-sed -i -e "s/<processors>.*<\/processors>/<processors><\/processors>/g" pom.xml
+sed -i -e "s/<processors>.*<\/processors>/<processors><\/processors>/g" $frameworkFolder/src/main/resources/pom.xml
 
 # 3. Generer le rapport html a partir de tous les rapports générés: java ReportCreater
 echo -e "Creation du rapport final..."
