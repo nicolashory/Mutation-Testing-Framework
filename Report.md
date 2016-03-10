@@ -1,3 +1,25 @@
+# Architecture
+
+## Mutateur
+
+L'architecture que nous avons voulu mettre en place se basait sur la génération de processeurs à partir de combinaisons de selecteurs et de mutations:
+Chaque processeur associe un selecteur et une mutation (soit de manière prédéfinie, mais également par la suite de manière automatique en générant toutes les combinaisons possibles), puis applique cette combinaison à notre code, générant ainsi un mutant unique.
+
+Nous avons cependant rencontrer des problèmes lorsque nous avons souhaités externaliser le code de nos selecteurs et mutations en dehors des processeurs, les sélecteurs ne sont par exemple jamais pris en compte, et certaines mutations donnaient des résultats non attendus.
+C'est la le premier point à améliorer dans notre Framework afin de le rendre totalement opérationnel.
+
+A l'heure actuelle, il ne fait qu'appliquer que des mutations prédéfinies dans les processeurs, et l'applique à la totalité des élements correspondant dans le code, sans prendre en compte les différents selecteurs générés.
+
+## Génération des Rapports
+
+
+## Chaine de Build
+
+Notre chaine de build est automatisée par un script Shell qui execute la totalité des opérations nécessaires au bon fonctionnement du framework.
+Il se base pour cela des fonctionnalités Shell pour la création des dossier, déplacement des dossiers au bon endroit, localisation de l'application à tester...
+Sur les plugins maven pour l'installation du framework, son test, ainsi que la génération des sources des différents mutants générés, et la génération des rapports via JUnit.
+Enfin, il utilise notre générateur de rapport Java sur les données produites par maven afin de produire le rapport final au format HTML qui contient la centralisation des résultats de toutes nos mutations.
+
 # Améliorations Possibles
 
 ## Boucles Infinies
@@ -35,15 +57,3 @@ Il serait interessant pour la suite de sauvegarder directement les modifications
 ##Faiblesses du report
 Le report est généré en Java, et parse les fichiers xml générés par JUnit. Notre framework est donc dépendant de la structure de ces fichiers report,
 ce qui est une faiblesse puisque le framework ne fonctionnerait plus si la structure des reports changeait.
-
-# Architecture
-
-L'architecture que nous avons voulu mettre en place se basait sur la génération de processeurs à partir de combinaisons de selecteurs et de mutations:
-Chaque processeur associe un selecteur et une mutation (soit de manière prédéfinie, mais également par la suite de manière automatique en générant toutes les combinaisons possibles), puis applique cette combinaison à notre code, générant ainsi un mutant unique.
-
-Nous avons cependant rencontrer des problèmes lorsque nous avons souhaités externaliser le code de nos selecteurs et mutations en dehors des processeurs, les sélecteurs ne sont par exemple jamais pris en compte, et certaines mutations donnaient des résultats non attendus.
-C'est la le premier point à améliorer dans notre Framework afin de le rendre totalement opérationnel.
-
-A l'heure actuelle, il ne fait qu'appliquer que des mutations prédéfinies dans les processeurs, et l'applique à la totalité des élements correspondant dans le code, sans prendre en compte les différents selecteurs générés.
-
-
