@@ -1,5 +1,12 @@
 # Architecture
 
+#Code de test fourni
+
+En clonant ce repository, vous obtiendrez un dossier Framework et un dossier Application. Le premier correspond évidemment à notre framework et contient
+notre script ainsi que toutes nos mutations et notre générateur de rapport.
+Le dossier Application comporte un code de base avec des opérations arithmétiques, et testé, avec un pom.xml déjà "opérationnel".
+Une fois le repository cloné, vous pouvez donc lancer le framework sur ce code pour vérifier le bon fonctionnement, puis sur un code un peu plus développé.
+
 ## Mutateur
 
 L'architecture que nous avons voulu mettre en place se basait sur la génération de processeurs à partir de combinaisons de selecteurs et de mutations:
