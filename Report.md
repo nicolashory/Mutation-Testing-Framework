@@ -7,7 +7,7 @@ notre script ainsi que toutes nos mutations et notre générateur de rapport.
 Le dossier Application comporte un code de base avec des opérations arithmétiques, et testé, avec un pom.xml déjà "opérationnel".
 Une fois le repository cloné, vous pouvez donc lancer le framework sur ce code pour vérifier le bon fonctionnement, puis sur un code un peu plus développé.
 
-## Mutateur
+## Mutation et Selecteur
 
 L'architecture que nous avons voulu mettre en place se basait sur la génération de processeurs à partir de combinaisons de selecteurs et de mutations:
 Chaque processeur associe un selecteur et une mutation (soit de manière prédéfinie, mais également par la suite de manière automatique en générant toutes les combinaisons possibles), puis applique cette combinaison à notre code, générant ainsi un mutant unique.
@@ -53,10 +53,6 @@ Il arrive que nos mutations génèrent des boucles infinies, qui ne sont pas tou
 Nous assumons pour l'instant que l'utilisateur annote la totalité de ses tests contenant des fonctions utilisant des boucles avec l'option timeout de Junit.
 Cependant, pour automatiser cela, nous pourrions effectuer une première mutation sur les tests de bases qui consisterait à rajouter ces annotations la ou elles ne sont pas présentes.
 Une autre solution serait d'utiliser les threads, en en créant un qui calcule le temps d'execution de chaque fonction, et qui coupe le thread parti en boucle infini.
-
-## Selecteurs
-
-## Mutations
 
 ## Génération Aléatoire
 
