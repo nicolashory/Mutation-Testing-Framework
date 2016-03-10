@@ -12,6 +12,7 @@ Il faut commencer par inclure la dépendance maven de notre framework dans le pr
     </parent>
 
 Cela permet de lier notre pom de base à celui de votre projet, afin que notre script puisse s'exécuter sans problèmes.
+Il faut cependant bien veiller à mettre le chemin relatif dans le relativePath et non pas un chemin absolu.
 
 ##2. Lancement du framework
 Il suffit d'utiliser notre script shell en indiquant le chemin absolu du dossier du projet que l'on souhaite tester.
