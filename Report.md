@@ -10,14 +10,32 @@ C'est la le premier point à améliorer dans notre Framework afin de le rendre t
 
 A l'heure actuelle, il ne fait qu'appliquer que des mutations prédéfinies dans les processeurs, et l'applique à la totalité des élements correspondant dans le code, sans prendre en compte les différents selecteurs générés.
 
-## Génération des Rapports
+## Génération du rapport
+
+La génération du rapport final se décompose en plusieurs étapes:
+- Tout d'abord, on récupère le nom de toutes nos mutations, ainsi que le nom de tous les fichiers de test, et on en crée un tableau.
+- On parcourt ensuite les dossiers générés dans Result, et pour chacun de ses dossiers on parcourt les fichier xml générés par les tests.
+- On récupère les informations pour chaque test, à savoir le nombre de succès et d'erreurs ou failures.
+- En fonction de ces nombres, on remplit le tableau avec des cases vertes ou rouges (ou marron si il y a des compilation failure).
+- On génère le diagramme Piechart à partir de ce tableau.
+
+Nous avons ensuite décidé de rajouter quelques fonctionnalités au rapport pour le suivi des mutations.
+De ce fait, un clic sur une case mène à un nouveau fichier contenant le code du fichier test, ainsi que les erreurs, et un lien vers le code mutant généré.
+
+Toutes ces étapes sont réalisées à l'aide des classes de Parsage fournies par Java. Cela est fort utile pour les fichier xml
+qui sont composés de balises, et pour lequel des méthodes sont implémentées.
+
+Bien évidemment, puisque la génération se fait en java, on utilise des FileWriter et FileReader pour écrire et lire les fichiers,
+ce qui fait que nous avons créé des méthodes assez importantes se résumant simplement à écrire des balises d'entêtes html
+et de style.
 
 
 ## Chaine de Build
 
 Notre chaine de build est automatisée par un script Shell qui execute la totalité des opérations nécessaires au bon fonctionnement du framework.
-Il se base pour cela des fonctionnalités Shell pour la création des dossier, déplacement des dossiers au bon endroit, localisation de l'application à tester...
-Sur les plugins maven pour l'installation du framework, son test, ainsi que la génération des sources des différents mutants générés, et la génération des rapports via JUnit.
+Il se base pour cela :
+- sur des fonctionnalités Shell pour la création des dossiers, déplacement des dossiers au bon endroit, localisation de l'application à tester...
+- sur les plugins maven pour l'installation du framework, son test, ainsi que la génération des sources des différents mutants générés, et la génération des rapports via JUnit.
 Enfin, il utilise notre générateur de rapport Java sur les données produites par maven afin de produire le rapport final au format HTML qui contient la centralisation des résultats de toutes nos mutations.
 
 # Améliorations Possibles
