@@ -1,6 +1,6 @@
 # Architecture
 
-#Code de test fourni
+## Code de test fourni
 
 En clonant ce repository, vous obtiendrez un dossier Framework et un dossier Application. Le premier correspond évidemment à notre framework et contient
 notre script ainsi que toutes nos mutations et notre générateur de rapport.
