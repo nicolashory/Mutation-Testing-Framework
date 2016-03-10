@@ -1,14 +1,11 @@
-## Génération du Framework
+##Build.md : Comment construire notre framework
 
-Il faut commencer par inclure la dépendance maven de notre framework dans le projet maven que vous souhaiter tester:
+Notre framework n'a pas besoin d'être construit puisqu'il s'agit d'un script shell automatisant toutes les étapes.
+En revanche, il y a plusieurs contraintes liées aux dépendances à l'environnement d'exécution.
 
-    <parent>
-      <groupId>devops.2.3</groupId>
-        <artifactId>master</artifactId>
-        <version>1.0-SNAPSHOT</version>
-        <relativePath>../../$cheminVersFrameWork/src/main/resources/pom.xml</relativePath>
-    </parent>
+# Dépendances
 
-Cela permet de lier notre pom de base à celui de votre projet, afin que notre script puisse s'exécuter.
-Il suffit ensuite d'utiliser notre script shell en indiquant le chemin absolu du dossier du projet que l'on souhaite tester.
-(Notre script inclut l'installation du framework, il n'est donc pas nécessaire d'effectuer cette étape à la main).
+- Java: utilisé pour la génération du rapport final
+- Bash: notre script utilise de nombreuses commandes bash
+- Maven: utilisation de pom.xml et modification de celui du code sur lequel le framework est appliqué
+- JUnit: lancement des tests avant et après mutation
